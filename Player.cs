@@ -13,10 +13,13 @@ public class Player : MonoBehaviour
     }
     private Keyboard keyboard = Keyboard.current;
     private State state = State.NEUTRAL;
-    
+
     public float prepareTime = 0.5f;
     public float attackTime = 0.5f;
     public float blockTime = 0.5f;
+
+    public Key attackKey = Key.Q;
+    public Key blockKey = Key.W;
 
     // Start is called before the first frame update
     void Start()
@@ -32,18 +35,18 @@ public class Player : MonoBehaviour
             Debug.Log("no keyboard");
         }
         if (state == State.NEUTRAL){
-            if (keyboard.qKey.wasPressedThisFrame)
+            if (keyboard[attackKey].wasPressedThisFrame)
             {
                 prepare();
             }
 
-            if (keyboard.wKey.wasPressedThisFrame)
+            if (keyboard[blockKey].wasPressedThisFrame)
             {
                 block();
             }
         }
         if (state == State.PREPARE){
-            if (keyboard.wKey.wasPressedThisFrame) {
+            if (keyboard[blockKey].wasPressedThisFrame) {
                 Debug.Log("Cancel!");
                 neutral();
             }
