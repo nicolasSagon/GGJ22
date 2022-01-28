@@ -1,40 +1,108 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
-    private State state = State.NEUTRAL;
-
     enum State {
+        PREPARE,
         ATTACK,
         BLOCK,
         NEUTRAL
     }
+    private Keyboard keyboard = Keyboard.current;
+    private State state = State.NEUTRAL;
+    
+    public float prepareTime = 0.5f;
+    public float attackTime = 0.5f;
+    public float blockTime = 0.5f;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if (keyboard == null)
+        {
+            Debug.Log("no keyboard");
+        }
+        if (state == State.NEUTRAL){
+            if (keyboard.qKey.wasPressedThisFrame)
+            {
+                prepare();
+            }
+
+            if (keyboard.wKey.wasPressedThisFrame)
+            {
+                block();
+            }
+        }
+        if (state == State.PREPARE){
+            if (keyboard.wKey.wasPressedThisFrame) {
+                Debug.Log("Cancel!");
+                neutral();
+            }
+        }
     }
 
     State GetState(){
-        return this.state;
+        return state;
     }
 
+    void setPreparing(){
+        state = State.PREPARE;
+    }
     void setAttacking(){
-        this.state = State.ATTACK;
+        state = State.ATTACK;
     }
     void setBlocking(){
-        this.state = State.BLOCK;
+        state = State.BLOCK;
     }
     void setNeutral(){
-        this.state = State.NEUTRAL;
+        state = State.NEUTRAL;
     }
+
+    void prepare(){
+        setPreparing();
+        Debug.Log("Preparing...");
+        StartCoroutine(preparing());
+    }
+    void attack(){
+        if (state == State.PREPARE) {
+            setAttacking();
+            Debug.Log("Attack!");
+            StartCoroutine(attacking());
+        }
+    }
+    void block(){
+        setBlocking();
+        Debug.Log("Block!");
+        StartCoroutine(blocking());
+    }
+    void neutral(){
+        setNeutral();
+        Debug.Log("Neutral!");
+    }
+
+    IEnumerator preparing()
+    {
+        yield return new WaitForSeconds(prepareTime);
+        attack();
+    }
+    IEnumerator attacking()
+    {
+        yield return new WaitForSeconds(attackTime);
+        neutral();
+    }
+    IEnumerator blocking()
+    {
+        yield return new WaitForSeconds(blockTime);
+        neutral();
+    }
+
 }
