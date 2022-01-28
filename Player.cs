@@ -9,7 +9,8 @@ public class Player : MonoBehaviour
         PREPARE,
         ATTACK,
         BLOCK,
-        NEUTRAL
+        NEUTRAL,
+        STUN
     }
     private Keyboard keyboard = Keyboard.current;
     private State state = State.NEUTRAL;
@@ -17,6 +18,7 @@ public class Player : MonoBehaviour
     public float prepareTime = 0.5f;
     public float attackTime = 0.5f;
     public float blockTime = 0.5f;
+    public float stunTime = 1.0f;
 
     public Key attackKey = Key.Q;
     public Key blockKey = Key.W;
@@ -33,6 +35,11 @@ public class Player : MonoBehaviour
         if (keyboard == null)
         {
             Debug.Log("no keyboard");
+        }
+        if (state == State.STUN){
+            if (keyboard.anyKey.wasPressedThisFrame){
+                Debug.Log("You're stunned...");
+            }
         }
         if (state == State.NEUTRAL){
             if (keyboard[attackKey].wasPressedThisFrame)
@@ -69,6 +76,9 @@ public class Player : MonoBehaviour
     void setNeutral(){
         state = State.NEUTRAL;
     }
+    void setStunned(){
+        state = State.STUN;
+    }
 
     void prepare(){
         setPreparing();
@@ -91,6 +101,11 @@ public class Player : MonoBehaviour
         setNeutral();
         Debug.Log("Neutral!");
     }
+    public void stun(){
+        setStunned();
+        Debug.Log("Stunned!");
+        StartCoroutine(stunned());
+    }
 
     IEnumerator preparing()
     {
@@ -105,6 +120,11 @@ public class Player : MonoBehaviour
     IEnumerator blocking()
     {
         yield return new WaitForSeconds(blockTime);
+        neutral();
+    }
+    IEnumerator stunned()
+    {
+        yield return new WaitForSeconds(stunTime);
         neutral();
     }
 
