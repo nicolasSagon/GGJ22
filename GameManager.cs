@@ -7,10 +7,14 @@ using UnityEngine.InputSystem;
 public class GameManager : MonoBehaviour
 {
     public int worldPositionMax = 10;
+    public string movingGameObjectName = "MOVING_PLAYERS";
+    public Player playerOne;
+    public Player playerTwo;
+    
     private int currentWorlPosition = 0;
 
-    private string playerOne = "Player 1";
-    private string playerTwo = "Player 2";
+    private string playerOnes = "Player 1";
+    private string playerTwos = "Player 2";
     private GameObject ground;
 
     private List<PlayerKey> playerKeys;
@@ -19,11 +23,11 @@ public class GameManager : MonoBehaviour
     {
         playerKeys = new()
         {
-            new PlayerKey(Key.RightArrow, playerOne),
-            new PlayerKey(Key.LeftArrow, playerTwo)
+            new PlayerKey(Key.RightArrow, playerOnes),
+            new PlayerKey(Key.LeftArrow, playerTwos)
         };
 
-        ground = GameObject.Find("Ground");
+        ground = GameObject.Find(movingGameObjectName);
     }
 
     private void FixedUpdate()
@@ -51,7 +55,7 @@ public class GameManager : MonoBehaviour
 
     public void pushPlayer(string playerName)
     {
-        if (playerName == playerOne)
+        if (playerName == playerOnes)
         {
             currentWorlPosition++;
             moveGround(true);
@@ -67,12 +71,12 @@ public class GameManager : MonoBehaviour
 
     private void moveGround(Boolean isForward)
     {
-        var value = isForward ? 1 : -1;
+        var value = isForward ? 3 : -3;
         var localPosition = ground.transform.localPosition;
         localPosition = new Vector3(
-            localPosition.x,
+            localPosition.x + value,
             localPosition.y,
-            localPosition.z + value
+            localPosition.z
         );
         ground.transform.localPosition = localPosition;
     }
