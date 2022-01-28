@@ -1,5 +1,6 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -13,6 +14,7 @@ public class Player : MonoBehaviour
     }
     private Keyboard keyboard = Keyboard.current;
     private State state = State.NEUTRAL;
+    [CanBeNull] private PlayerListener _playerListener;
 
     public float prepareTime = 0.5f;
     public float attackTime = 0.5f;
@@ -20,6 +22,11 @@ public class Player : MonoBehaviour
 
     public Key attackKey = Key.Q;
     public Key blockKey = Key.W;
+
+    public void setPlayerListener(PlayerListener playerListener)
+    {
+        _playerListener = playerListener;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -62,6 +69,7 @@ public class Player : MonoBehaviour
     }
     void setAttacking(){
         state = State.ATTACK;
+        _playerListener?.sendAttack();
     }
     void setBlocking(){
         state = State.BLOCK;
