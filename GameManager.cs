@@ -125,6 +125,13 @@ public class GameManager : MonoBehaviour
         }
 
         superPanel.SetActive(true);
+        var samuraiSuper = superPanel.GetComponent<SamuraiSuper>();
+        samuraiSuper.enabled = true;
+        samuraiSuper.initSamuraiSuper(
+            handleSuper,
+            new PlayerData(playerOne.playerName, playerOne.CustomInputDevice),
+            new PlayerData(playerTwo.playerName, playerTwo.CustomInputDevice)
+        );
         playerOne.enabled = false;
         playerTwo.enabled = false;
 
@@ -184,7 +191,7 @@ public class GameManager : MonoBehaviour
         }
         updateHits(isMovingRight);
         updateHits(isMovingRight);
-        superPanel.SetActive(false);;
+        superPanel.SetActive(false);
         playerOne.enabled = true;
         playerTwo.enabled = true;
     }
@@ -214,13 +221,5 @@ public class GameManager : MonoBehaviour
         Debug.Log("Game start Fight");
         playerOne.setCustomInputDevice(_inputManager.FirstController);
         playerTwo.setCustomInputDevice(_inputManager.SecondController);
-        
-        var samuraiSuper = superPanel.GetComponent<SamuraiSuper>();
-        samuraiSuper.enabled = true;
-        samuraiSuper.initSamuraiSuper(
-            handleSuper,
-            new PlayerData(playerOne.playerName, playerOne.CustomInputDevice),
-            new PlayerData(playerTwo.playerName, playerTwo.CustomInputDevice)
-        );
     }
 }
