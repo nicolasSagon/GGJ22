@@ -14,6 +14,8 @@ public class Player : MonoBehaviour
         NEUTRAL,
         STUN
     }
+
+    public string name;
     private Keyboard keyboard = Keyboard.current;
     private State state = State.NEUTRAL;
     [CanBeNull] private Action _playerAttackFunc; 
@@ -38,6 +40,11 @@ public class Player : MonoBehaviour
 
     }
 
+    private void debugWithPlayerName(string logString)
+    {
+        Debug.Log($"{name} => {logString}");
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -47,7 +54,7 @@ public class Player : MonoBehaviour
         }
         if (state == State.STUN){
             if (keyboard.anyKey.wasPressedThisFrame){
-                Debug.Log("You're stunned...");
+                debugWithPlayerName("You're stunned...");
             }
         }
         if (state == State.NEUTRAL){
@@ -63,7 +70,7 @@ public class Player : MonoBehaviour
         }
         if (state == State.PREPARE){
             if (keyboard[blockKey].wasPressedThisFrame) {
-                Debug.Log("Cancel!");
+                debugWithPlayerName("Cancel!");
                 neutral();
             }
         }
@@ -92,33 +99,33 @@ public class Player : MonoBehaviour
     void prepare(){
         // anim.Play("prepare"); // TODO: uncomment when animation is ready
         setPreparing();
-        Debug.Log("Preparing...");
+        debugWithPlayerName("Preparing...");
         StartCoroutine(preparing());
     }
     void attack(){
         if (state == State.PREPARE) {
             // anim.Play("attack"); // TODO: uncomment when animation is ready
             setAttacking();
-            Debug.Log("Attack!");
+            debugWithPlayerName("Attack!");
             StartCoroutine(attacking());
         }
     }
     void block(){
         // anim.Play("block"); // TODO: uncomment when animation is ready
         setBlocking();
-        Debug.Log("Block!");
+        debugWithPlayerName("Block!");
         StartCoroutine(blocking());
     }
     void neutral(){
         // anim.Play("neutral"); // TODO: uncomment when animation is ready
         setNeutral();
-        Debug.Log("Neutral!");
+        debugWithPlayerName("Neutral!");
     }
     public void stun(){
         StopAllCoroutines();
         // anim.Play("stun");
         setStunned();
-        Debug.Log("Stunned!");
+        debugWithPlayerName("Stunned!");
         StartCoroutine(stunned());
     }
 

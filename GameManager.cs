@@ -44,24 +44,29 @@ public class GameManager : MonoBehaviour
 
     private void firstPlayerAttackFunc()
     {
-        var playerTwoState = playerTwo.GetState();
-        switch (playerTwoState)
+        handleAttack(playerOne, playerTwo, true);
+    }
+
+    private void secondPlayerAttackFunc()
+    {
+        handleAttack(playerTwo, playerOne, false);
+    }
+
+    private void handleAttack(Player attackingPlayer, Player defensePlayer, Boolean isMovingRight)
+    {
+        var defensePlayerState = defensePlayer.GetState();
+        switch (defensePlayerState)
         {
             case Player.State.BLOCK:
                 // Don't move the players but stun player one
-                playerOne.stun();
+                attackingPlayer.stun();
                 break;
             case Player.State.ATTACK:
                 // Don't move the players, the attack is null
                 break;
             default:
-                moveGround(true);
+                moveGround(isMovingRight);
                 break;
         }
-    }
-
-    private void secondPlayerAttackFunc()
-    {
-        Debug.Log("Second player attack");
     }
 }
