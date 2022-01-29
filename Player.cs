@@ -109,7 +109,10 @@ public class Player : MonoBehaviour
         Debug.Log("Block!");
         StartCoroutine(blocking());
     }
-    void neutral(){
+    void neutral(bool force = false){
+        if (state == State.STUN && !force){
+            return;
+        }
         // anim.Play("neutral"); // TODO: uncomment when animation is ready
         setNeutral();
         Debug.Log("Neutral!");
@@ -141,7 +144,7 @@ public class Player : MonoBehaviour
     IEnumerator stunned()
     {
         yield return new WaitForSeconds(stunTime);
-        neutral();
+        neutral(force: true);
     }
 
 }
