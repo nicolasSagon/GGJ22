@@ -116,7 +116,7 @@ public class Player : MonoBehaviour
     }
     public void stun(){
         StopAllCoroutines();
-        // anim.Play("stun");
+        // anim.Play("stun"); // TODO: uncomment when animation is ready
         setStunned();
         Debug.Log("Stunned!");
         StartCoroutine(stunned());
