@@ -9,8 +9,8 @@ using UnityEngine.InputSystem;
 public class GameManager : MonoBehaviour
 {
     public GameObject feedbackDoubleAttack;
+    public GameObject superParticle1, superParticle2;
     private int scoreToWin = 5;
-
     public string movingGameObjectName = "MOVING_PLAYERS";
     public Player playerOne;
     public Player playerTwo;
@@ -58,6 +58,8 @@ public class GameManager : MonoBehaviour
         {
             StartCoroutine(startGame());
         });
+        superParticle1.SetActive(false);
+        superParticle2.SetActive(false);
     }
 
     private void moveGround(Boolean isMoveRight)
@@ -70,33 +72,38 @@ public class GameManager : MonoBehaviour
             localPosition.z
         );
         ground.transform.localPosition = localPosition;
-        Debug.Log($"Player1 Super: {playerOne.isSuperReady()} / Player2 Super: {playerTwo.isSuperReady()}");
+
 
     }
 
     private void Update()
     {
-        if (playerOne.GetScore() >= scoreToWin || consecHitPlayer1 >= hitsToWin){
-            Debug.Log($"{playerOne.playerName} wins!");
-            // TODO: win anim
-        }
-        else if (playerTwo.GetScore() >= scoreToWin || consecHitPlayer2 >= hitsToWin){
-            Debug.Log($"{playerTwo.playerName} wins!");
-            // TODO: win anim
-        }
+        
 
         if (playerOne.GetScore() < (1 - scoreToWin + dangerZone) && !playerOne.isSuperReady()){
             playerOne.setSuperReady();
+            if (!superParticle1.activeSelf && !superUsedPlayerOne){
+                superParticle1.SetActive(true);
+            }
         }
         if (playerTwo.GetScore() < (1 - scoreToWin + dangerZone) && !playerTwo.isSuperReady()){
             playerTwo.setSuperReady();
+            if (!superParticle2.activeSelf && !superUsedPlayerTwo){
+                superParticle2.SetActive(true);
+            }
         }
 
         if (playerOne.GetScore() >= (1 - scoreToWin + dangerZone) && playerOne.isSuperReady()){
             playerOne.unsetSuperReady();
+            if (superParticle1.activeSelf){
+                superParticle1.SetActive(false);
+            }
         }
         if (playerTwo.GetScore() >= (1 - scoreToWin + dangerZone) && playerTwo.isSuperReady()){
             playerTwo.unsetSuperReady();
+            if (superParticle2.activeSelf){
+                superParticle2.SetActive(false);
+            }
         }
         // TODO : end game
     }
@@ -151,6 +158,16 @@ public class GameManager : MonoBehaviour
             case Player.State.BLOCK:
                 // Don't move the players but stun player one
                 attackingPlayer.stun();
+                if (isMovingRight){
+                    if (consecHitPlayer1 > 0) {
+                        consecHitPlayer1--;
+                    }
+                } else {
+                    if (consecHitPlayer2 > 0) {
+                        consecHitPlayer2--;
+                    }
+                }
+                _scoreManager.displayHits(consecHitPlayer1, consecHitPlayer2);
                 break;
             case Player.State.ATTACK:
                 // Don't move the players, the attack is null
@@ -163,13 +180,17 @@ public class GameManager : MonoBehaviour
                 break;
             default:
                 moveGround(isMovingRight);
+                defensePlayer.takeHit();
                 StartCoroutine(feedback(defensePlayer.feedbackHit));
                 updateHits(isMovingRight);
                 attackingPlayer.scoreUp();
                 defensePlayer.scoreDown();
                 break;
         }
-        _scoreManager.displayHits(consecHitPlayer1, consecHitPlayer2);
+        checkVictory();
+    }
+    private void handleBlock(Player attackingPlayer, Player defensePlayer){
+
     }
     private void handleSuper(PlayerData winnerData){
         Player winner, loser;
@@ -194,6 +215,25 @@ public class GameManager : MonoBehaviour
         superPanel.SetActive(false);
         playerOne.enabled = true;
         playerTwo.enabled = true;
+        checkVictory();
+    }
+    private void checkVictory(){
+        if (playerOne.GetScore() >= scoreToWin ){
+            playerOne.win();
+            playerTwo.fall();
+        }
+        else if (consecHitPlayer1 >= hitsToWin) {
+            playerOne.win();
+            playerTwo.die();
+        }
+        else if (playerTwo.GetScore() >= scoreToWin){
+            playerTwo.win();
+            playerOne.fall();
+        }
+        else if (consecHitPlayer2 >= hitsToWin){
+            playerTwo.win();
+            playerOne.die();
+        }
     }
     public IEnumerator feedback(GameObject o) {
         o.SetActive(true);
@@ -213,6 +253,7 @@ public class GameManager : MonoBehaviour
             consecHitPlayer2++;
             consecHitPlayer1 = 0;
         }
+        _scoreManager.displayHits(consecHitPlayer1, consecHitPlayer2);
     }
 
     private IEnumerator startGame()

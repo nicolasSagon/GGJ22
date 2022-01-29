@@ -5,11 +5,14 @@ using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Users;
+using System.Linq;
 
 public class Player : MonoBehaviour
 {
     public GameObject feedbackStateNeutral, feedbackStatePrepare, feedbackStateAttack, feedbackStateBlock, feedbackStateStunned;
     public GameObject feedbackCancel, feedbackHit;
+    private Animator anim;
+    public AnimationClip hitAnim;
 
     public enum State {
         PREPARE,
@@ -55,6 +58,7 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        anim = GetComponent<Animator>();
         neutral();
     }
 
@@ -91,11 +95,13 @@ public class Player : MonoBehaviour
             if (attackPressed)
             {
                 feedbackStateNeutral.SetActive(false);
+                anim.SetBool("neutral", false);
                 prepare();
             }
             else if (blockPressed)
             {
                 feedbackStateNeutral.SetActive(false);
+                anim.SetBool("neutral", false);
                 block();
             }
 
@@ -111,6 +117,7 @@ public class Player : MonoBehaviour
                 debugWithPlayerName("Cancel!");
                 StartCoroutine(feedback(feedbackCancel));
                 feedbackStatePrepare.SetActive(false);
+                anim.SetBool("punch", false);
                 neutral();
             }
         }
@@ -142,6 +149,7 @@ public class Player : MonoBehaviour
     void setPreparing(){
         state = State.PREPARE;
         feedbackStatePrepare.SetActive(true);
+        anim.SetBool("punch", true);
     }
     void setAttacking(){
         state = State.ATTACK;
@@ -150,14 +158,17 @@ public class Player : MonoBehaviour
     void setBlocking(){
         state = State.BLOCK;
         feedbackStateBlock.SetActive(true);
+        anim.SetBool("block", true);
     }
     void setNeutral(){
         state = State.NEUTRAL;
         feedbackStateNeutral.SetActive(true);
+        anim.SetBool("neutral", true);
     }
     void setStunned(){
         state = State.STUN;
         feedbackStateStunned.SetActive(true);
+        anim.SetBool("stun", true);
     }
 
     void prepare(){
@@ -178,6 +189,7 @@ public class Player : MonoBehaviour
         if (lastAttackingCoroutine != null) {
             StopCoroutine(lastAttackingCoroutine);
             feedbackStateAttack.SetActive(false);
+            anim.SetBool("punch", false);
         }
         // anim.Play("doubleattack"); // TODO: uncomment when animation is ready
         debugWithPlayerName("Double Attack!");
@@ -203,6 +215,33 @@ public class Player : MonoBehaviour
         debugWithPlayerName("Stunned!");
         StartCoroutine(stunned());
     }
+    public void die(){
+        foreach (var p in anim.parameters.Where(item => item.type == AnimatorControllerParameterType.Bool)){
+            anim.SetBool(p.name, false);
+        }
+        CustomInputDevice = null;
+        anim.SetBool("death", true);
+    }
+    public void fall(){
+        foreach (var p in anim.parameters.Where(item => item.type == AnimatorControllerParameterType.Bool)){
+            anim.SetBool(p.name, false);
+        }
+        CustomInputDevice = null;
+        anim.SetBool("fall", true);
+    }
+    public void win(){
+        foreach (var p in anim.parameters.Where(item => item.type == AnimatorControllerParameterType.Bool)){
+            anim.SetBool(p.name, false);
+        }
+        CustomInputDevice = null;
+        anim.SetBool("victory", true);
+    }
+    public void takeHit(){
+        foreach (var p in anim.parameters.Where(item => item.type == AnimatorControllerParameterType.Bool)){
+            anim.SetBool(p.name, false);
+        }
+        StartCoroutine(hit());
+    }
 
     IEnumerator preparing()
     {
@@ -215,19 +254,28 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(attackTime);
         _playerAttackFunc?.Invoke();
         feedbackStateAttack.SetActive(false);
+        anim.SetBool("punch", false);
         neutral();
     }
     IEnumerator blocking()
     {
         yield return new WaitForSeconds(blockTime);
         feedbackStateBlock.SetActive(false);
+        anim.SetBool("block", false);
         neutral();
     }
     IEnumerator stunned()
     {
         yield return new WaitForSeconds(stunTime);
         feedbackStateStunned.SetActive(false);
+        anim.SetBool("stun", false);
         neutral(force: true);
+    }
+    IEnumerator hit(){
+        anim.SetBool("hit", true);
+        yield return new WaitForSeconds(hitAnim.length);
+        anim.SetBool("hit", false);
+        neutral();
     }
     IEnumerator feedback(GameObject o) {
         o.SetActive(true);

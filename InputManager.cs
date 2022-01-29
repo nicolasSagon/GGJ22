@@ -129,6 +129,10 @@ public class InputManager: MonoBehaviour
                 }
                 else
                 {
+                    if (firstController is {InputType: CustomInputDevice.InputTypeEnum.KEYBOARD} && firstController.KeyboardKeys.Contains(keyControl))
+                    {
+                        return;
+                    } 
                     Debug.Log("Keyboard set for player two");
                     secondController = new CustomInputDevice(CustomInputDevice.InputTypeEnum.KEYBOARD, Keyboard.current, secondKeyboardInput, null);
                     setInputManagerInitialized();
