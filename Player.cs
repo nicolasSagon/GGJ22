@@ -28,8 +28,8 @@ public class Player : MonoBehaviour
 
     public float prepareTime = 0.5f;
     public float attackTime = 0.5f;
-    public float blockTime = 0.5f;
-    public float stunTime = 1.0f;
+    public float blockTime = 1.0f;
+    public float stunTime = 2.0f;
 
     public Key attackKey = Key.Q;
     public Key blockKey = Key.W;
