@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -114,6 +115,7 @@ public class Player : MonoBehaviour
         Debug.Log("Neutral!");
     }
     public void stun(){
+        StopAllCoroutines();
         // anim.Play("stun");
         setStunned();
         Debug.Log("Stunned!");
