@@ -21,6 +21,7 @@ public class Player : MonoBehaviour
     public string playerName;
     private Keyboard keyboard = Keyboard.current;
     private State state;
+    private int score;
     [CanBeNull] private Action _playerAttackFunc; 
 
     public float prepareTime = 0.5f;
@@ -88,7 +89,15 @@ public class Player : MonoBehaviour
     public State GetState(){
         return state;
     }
-
+    public int GetScore(){
+        return score;
+    }
+    public void scoreUp(){
+        score++;
+    }
+    public void scoreDown(){
+        score--;
+    }
     void setPreparing(){
         state = State.PREPARE;
         feedbackStatePrepare.SetActive(true);

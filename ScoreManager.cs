@@ -26,7 +26,7 @@ public class ScoreManager
         }
     }
 
-    public void displayScore(int score1, int score2)
+    public void displayHits(int score1, int score2)
     {
         handleScore(score1, player1ScoreItems);
         handleScore(score2, player2ScoreItems);

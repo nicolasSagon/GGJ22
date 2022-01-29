@@ -9,19 +9,19 @@ using UnityEngine.InputSystem;
 public class GameManager : MonoBehaviour
 {
     public GameObject feedbackDoubleAttack;
+    private int scoreToWin = 5;
 
-    public int worldPositionMax = 10;
     public string movingGameObjectName = "MOVING_PLAYERS";
     public Player playerOne;
     public Player playerTwo;
 
-    private int currentWorlPosition = 0;
     private GameObject ground;
 
     private ScoreManager _scoreManager;
 
-    private int scorePlayer1 = 0;
-    private int scorePlayer2 = 0;
+    private int consecHitPlayer1 = 0;
+    private int consecHitPlayer2 = 0;
+    private int hitsToWin = 3;
     
     public void Start()
     {
@@ -56,6 +56,19 @@ public class GameManager : MonoBehaviour
         ground.transform.localPosition = localPosition;
     }
 
+    private void Update()
+    {
+        if (playerOne.GetScore() >= scoreToWin || consecHitPlayer1 >= hitsToWin){
+            Debug.Log($"{playerOne.playerName} wins!");
+            // TODO: win anim
+        }
+        else if (playerTwo.GetScore() >= scoreToWin || consecHitPlayer2 >= hitsToWin){
+            Debug.Log($"{playerTwo.playerName} wins!");
+            // TODO: win anim
+        }
+        // TODO : end game
+    }
+
     private void firstPlayerAttackFunc()
     {
         handleAttack(playerOne, playerTwo, true);
@@ -87,10 +100,12 @@ public class GameManager : MonoBehaviour
             default:
                 moveGround(isMovingRight);
                 StartCoroutine(feedback(defensePlayer.feedbackHit));
-                updateScore(isMovingRight);
+                updateHits(isMovingRight);
+                attackingPlayer.scoreUp();
+                defensePlayer.scoreDown();
                 break;
         }
-        _scoreManager.displayScore(scorePlayer1, scorePlayer2);
+        _scoreManager.displayHits(consecHitPlayer1, consecHitPlayer2);
     }
     public IEnumerator feedback(GameObject o) {
         o.SetActive(true);
@@ -98,17 +113,17 @@ public class GameManager : MonoBehaviour
         o.SetActive(false);
     }
 
-    private void updateScore(Boolean isMovingRight)
+    private void updateHits(Boolean isMovingRight)
     {
         if (isMovingRight)
         {
-            scorePlayer1++;
-            scorePlayer2 = 0;
+            consecHitPlayer1++;
+            consecHitPlayer2 = 0;
         }
         else
         {
-            scorePlayer2++;
-            scorePlayer1 = 0;
+            consecHitPlayer2++;
+            consecHitPlayer1 = 0;
         }
     }
 }
