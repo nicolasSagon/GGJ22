@@ -91,7 +91,11 @@ public class GameManager : MonoBehaviour
         playerTwo.enabled = false;
         var samuraiSuper = superPanel.GetComponent<SamuraiSuper>();
         samuraiSuper.enabled = true;
-        samuraiSuper.initSamuraiSuper(superFinished, playerOne.attackKey, playerTwo.attackKey);
+        samuraiSuper.initSamuraiSuper(
+            superFinished,
+            new PlayerData(playerOne.playerName, playerOne.attackKey),
+            new PlayerData(playerTwo.playerName, playerTwo.attackKey)
+            );
     }
 
     private void superFinished()
