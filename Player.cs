@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Users;
 
 public class Player : MonoBehaviour
 {
@@ -49,6 +50,7 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        gamepad = Gamepad.all[gamepadNumber]; 
         neutral();
     }
 
@@ -66,18 +68,18 @@ public class Player : MonoBehaviour
             return;
         }
         if (state == State.STUN){
-            if (keyboard.anyKey.wasPressedThisFrame){
+            if (keyboard.anyKey.wasPressedThisFrame || gamepad.aButton.wasPressedThisFrame || gamepad.bButton.wasPressedThisFrame){
                 debugWithPlayerName("You're stunned...");
             }
         }
         if (state == State.NEUTRAL){
-            if (keyboard[attackKey].wasPressedThisFrame)
+            if (keyboard[attackKey].wasPressedThisFrame || gamepad.aButton.wasPressedThisFrame)
             {
                 feedbackStateNeutral.SetActive(false);
                 prepare();
             }
 
-            if (keyboard[blockKey].wasPressedThisFrame)
+            if (keyboard[blockKey].wasPressedThisFrame || gamepad.bButton.wasPressedThisFrame)
             {
                 feedbackStateNeutral.SetActive(false);
                 block();
@@ -91,7 +93,7 @@ public class Player : MonoBehaviour
             }
         }
         if (state == State.PREPARE){
-            if (keyboard[blockKey].wasPressedThisFrame) {
+            if (keyboard[blockKey].wasPressedThisFrame || gamepad.bButton.wasPressedThisFrame) {
                 debugWithPlayerName("Cancel!");
                 StartCoroutine(feedback(feedbackCancel));
                 feedbackStatePrepare.SetActive(false);
