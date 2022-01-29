@@ -77,12 +77,12 @@ public class CustomInputDevice
             case InputTypeEnum.GAMEPAD:
             {
                 var gamePad = _controller as Gamepad;
-                return gamePad[_gamepadButtons[3]].wasPressedThisFrame;
+                return gamePad[_gamepadButtons[2]].wasPressedThisFrame;
             }
             case InputTypeEnum.KEYBOARD:
             {
                 var keyboard = _controller as Keyboard;
-                return keyboard[_keyboardKeys[3]].wasPressedThisFrame;
+                return keyboard[_keyboardKeys[2]].wasPressedThisFrame;
             }
             default:
                 return false;

@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
@@ -7,8 +9,13 @@ using UnityEngine.InputSystem.LowLevel;
 public class InputManager: MonoBehaviour
 {
     private CustomInputDevice firstController;
+    public CustomInputDevice FirstController => firstController;
+
     private CustomInputDevice secondController;
+    public CustomInputDevice SecondController => secondController;
+    
     private Boolean isInit = false;
+    [CanBeNull] private Action inputManagerInitializedCallback;
 
     private List<Key> firstKeyboardInput = new()
     {
@@ -30,6 +37,11 @@ public class InputManager: MonoBehaviour
         GamepadButton.X
     };
 
+    public void setInputManagerCallback(Action callback)
+    {
+        inputManagerInitializedCallback = callback;
+    }
+
     private void Update()
     {
         if (!isInit && firstController == null)
@@ -44,6 +56,7 @@ public class InputManager: MonoBehaviour
     private void setInputManagerInitialized()
     {
         isInit = true;
+        inputManagerInitializedCallback?.Invoke();
     }
 
     private void selectController(Boolean isFirst)
@@ -55,7 +68,12 @@ public class InputManager: MonoBehaviour
         }
             
         var gamepads = Gamepad.all;
-            
+        if (firstController != null)
+        {
+            gamepads = gamepads.Where(item => item.name != firstController.Controller.name).ToArray();
+        }
+        
+
         foreach (var gamepad in gamepads)
         {
             foreach (var gamepadButton in gamePadInput)
@@ -77,7 +95,7 @@ public class InputManager: MonoBehaviour
                 }
             }
         }
-
+        
         firstKeyboardInput.ForEach(keyControl =>
         {
             if (currentKeyboard[keyControl].wasPressedThisFrame)
@@ -89,6 +107,10 @@ public class InputManager: MonoBehaviour
                 }
                 else
                 {
+                    if (firstController is {InputType: CustomInputDevice.InputTypeEnum.KEYBOARD} && firstController.KeyboardKeys.Contains(keyControl))
+                    {
+                        return;
+                    } 
                     Debug.Log("Keyboard set for player two");
                     secondController = new CustomInputDevice(CustomInputDevice.InputTypeEnum.KEYBOARD, Keyboard.current, firstKeyboardInput, null);
                     setInputManagerInitialized();

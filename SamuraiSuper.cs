@@ -68,7 +68,7 @@ public class SamuraiSuper: MonoBehaviour
 
     private void handlePlayerInputs(Keyboard keyboard, PlayerData currentPlayer)
     {
-        if (keyboard[currentPlayer.PlayerKey].wasPressedThisFrame && _isListeningKeyboard)
+        if (currentPlayer.InputDevice.isAttackPressed() && _isListeningKeyboard)
         {
             _isListeningKeyboard = false;
             if (_isAlowedToPushKey)

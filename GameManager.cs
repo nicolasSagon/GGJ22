@@ -27,12 +27,14 @@ public class GameManager : MonoBehaviour
     private bool superUsedPlayerOne = false;
     private bool superUsedPlayerTwo = false;
     private GameObject superPanel;
+    private InputManager _inputManager;
 
     public void Start()
     {
         ground = GameObject.Find(movingGameObjectName);
         superPanel = GameObject.Find("SuperPanel");
-        
+        _inputManager = FindObjectOfType<InputManager>();
+
         superPanel.SetActive(false);
         
         playerOne.setPlayerActions(firstPlayerAttackFunc, startSuper);
@@ -51,6 +53,11 @@ public class GameManager : MonoBehaviour
 
         _scoreManager = new ScoreManager(player1ScoreItems, player2ScoreItems);
         _scoreManager.init();
+        
+        _inputManager.setInputManagerCallback(() =>
+        {
+            StartCoroutine(startGame());
+        });
     }
 
     private void moveGround(Boolean isMoveRight)
@@ -120,13 +127,6 @@ public class GameManager : MonoBehaviour
         superPanel.SetActive(true);
         playerOne.enabled = false;
         playerTwo.enabled = false;
-        var samuraiSuper = superPanel.GetComponent<SamuraiSuper>();
-        samuraiSuper.enabled = true;
-        samuraiSuper.initSamuraiSuper(
-            handleSuper,
-            new PlayerData(playerOne.playerName, playerOne.attackKey),
-            new PlayerData(playerTwo.playerName, playerTwo.attackKey)
-            );
 
         if (playerName == playerOne.playerName){
             superUsedPlayerOne = true;
@@ -206,5 +206,21 @@ public class GameManager : MonoBehaviour
             consecHitPlayer2++;
             consecHitPlayer1 = 0;
         }
+    }
+
+    private IEnumerator startGame()
+    {
+        yield return new WaitForSeconds(2);
+        Debug.Log("Game start Fight");
+        playerOne.setCustomInputDevice(_inputManager.FirstController);
+        playerTwo.setCustomInputDevice(_inputManager.SecondController);
+        
+        var samuraiSuper = superPanel.GetComponent<SamuraiSuper>();
+        samuraiSuper.enabled = true;
+        samuraiSuper.initSamuraiSuper(
+            handleSuper,
+            new PlayerData(playerOne.playerName, playerOne.CustomInputDevice),
+            new PlayerData(playerTwo.playerName, playerTwo.CustomInputDevice)
+        );
     }
 }

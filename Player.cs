@@ -20,11 +20,11 @@ public class Player : MonoBehaviour
     }
 
     public string playerName;
-    private Keyboard keyboard = Keyboard.current;
     private State state;
     private int score;
     [CanBeNull] private Action _playerAttackFunc;
     [CanBeNull] private Action<string> _playerStartSuper;
+    public CustomInputDevice CustomInputDevice;
 
     public float prepareTime = 0.5f;
     public float attackTime = 0.5f;
@@ -47,28 +47,14 @@ public class Player : MonoBehaviour
         _playerStartSuper = playerStartSuper;
     }
 
+    public void setCustomInputDevice(CustomInputDevice customInputDevice)
+    {
+        CustomInputDevice = customInputDevice;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-        if (gamepadEnabled) {
-            try {
-                if (Gamepad.all.Count > 1) {
-                    gamepad = Gamepad.all[gamepadNumber];
-                }
-                else if (Gamepad.all.Count == 1){
-                    gamepad = Gamepad.all[0];
-                }
-                else {
-                    gamepad = null;
-                }
-            }
-            catch (ArgumentOutOfRangeException) {
-                gamepad = null;
-            }
-        }
-        else{
-            gamepad = null;
-        }
         neutral();
     }
 
@@ -83,29 +69,19 @@ public class Player : MonoBehaviour
         bool attackPressed = false;
         bool blockPressed = false;
 
-        if (keyboard == null)
+        if (CustomInputDevice == null)
         {
-            Debug.Log("no keyboard");
             return;
         }
 
-        if (gamepad != null){
-            if (gamepad.aButton.wasPressedThisFrame){
-                attackPressed = true;
-            }
-            else if (gamepad.bButton.wasPressedThisFrame){
-                blockPressed = true;
-            }
-        } else {
-            if (keyboard[attackKey].wasPressedThisFrame){
-                attackPressed = true;
-            }
-            else if (keyboard[blockKey].wasPressedThisFrame){
-                blockPressed = true;
-            }
+        if (CustomInputDevice.isAttackPressed())
+        {
+            attackPressed = true;
+        } else if (CustomInputDevice.isBlockPressed())
+        {
+            blockPressed = true;
         }
         
-
         if (state == State.STUN){
             if (attackPressed || blockPressed){
                 debugWithPlayerName("You're stunned...");
@@ -123,7 +99,7 @@ public class Player : MonoBehaviour
                 block();
             }
 
-            if (keyboard[superKey].wasPressedThisFrame)
+            if (CustomInputDevice.isSuperPressed())
             {
                 if (isSuperReady()){
                     _playerStartSuper?.Invoke(playerName);

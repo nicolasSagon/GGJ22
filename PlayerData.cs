@@ -1,18 +1,16 @@
-using UnityEngine.InputSystem;
-
 public struct PlayerData
 {
     private string playerName;
 
     public string PlayerName => playerName;
 
-    public Key PlayerKey => playerKey;
+    public CustomInputDevice InputDevice => _customInputDevice;
 
-    private Key playerKey;
+    private CustomInputDevice _customInputDevice;
 
-    public PlayerData(string playerName, Key playerKey)
+    public PlayerData(string playerName, CustomInputDevice playerInputDevice)
     {
         this.playerName = playerName;
-        this.playerKey = playerKey;
+        _customInputDevice = playerInputDevice;
     }
 }
