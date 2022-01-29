@@ -10,24 +10,24 @@ public class GameManager : MonoBehaviour
     public string movingGameObjectName = "MOVING_PLAYERS";
     public Player playerOne;
     public Player playerTwo;
-    
+
     private int currentWorlPosition = 0;
     private GameObject ground;
 
     public void Start()
     {
         ground = GameObject.Find(movingGameObjectName);
-        playerOne.setPlayerListener(new firstPlayerListener());
-        playerTwo.setPlayerListener(new secondPlayerListener());
+        playerOne.setPlayerAction(firstPlayerAttackFunc);
+        playerTwo.setPlayerAction(secondPlayerAttackFunc);
     }
 
     public void pushPlayer(string playerName)
     {
     }
 
-    private void moveGround(Boolean isForward)
+    private void moveGround(Boolean isMoveRight)
     {
-        var value = isForward ? 3 : -3;
+        var value = isMoveRight ? 3 : -3;
         var localPosition = ground.transform.localPosition;
         localPosition = new Vector3(
             localPosition.x + value,
@@ -42,19 +42,26 @@ public class GameManager : MonoBehaviour
         Debug.Log("Current score = " + currentWorlPosition);
     }
 
-    private class firstPlayerListener : PlayerListener
+    private void firstPlayerAttackFunc()
     {
-        public void sendAttack()
+        var playerTwoState = playerTwo.GetState();
+        switch (playerTwoState)
         {
-            Debug.Log("First player attack");
+            case Player.State.BLOCK:
+                // Don't move the players but stun player one
+                playerOne.stun();
+                break;
+            case Player.State.ATTACK:
+                // Don't move the players, the attack is null
+                break;
+            default:
+                moveGround(true);
+                break;
         }
     }
 
-    private class secondPlayerListener : PlayerListener
+    private void secondPlayerAttackFunc()
     {
-        public void sendAttack()
-        {
-            Debug.Log("Second player attack");
-        }
+        Debug.Log("Second player attack");
     }
 }
