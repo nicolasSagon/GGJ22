@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
-    enum State {
+    public enum State {
         PREPARE,
         ATTACK,
         BLOCK,
@@ -15,7 +15,7 @@ public class Player : MonoBehaviour
     }
     private Keyboard keyboard = Keyboard.current;
     private State state = State.NEUTRAL;
-    [CanBeNull] private PlayerListener _playerListener;
+    [CanBeNull] private Action _playerAttackFunc; 
 
     public float prepareTime = 0.5f;
     public float attackTime = 0.5f;
@@ -26,9 +26,9 @@ public class Player : MonoBehaviour
     public Key blockKey = Key.W;
     public Animation anim;
 
-    public void setPlayerListener(PlayerListener playerListener)
+    public void setPlayerAction(Action playerAttackFunc)
     {
-        _playerListener = playerListener;
+        _playerAttackFunc = playerAttackFunc;
     }
 
     // Start is called before the first frame update
@@ -68,7 +68,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    State GetState(){
+    public State GetState(){
         return state;
     }
 
@@ -77,7 +77,6 @@ public class Player : MonoBehaviour
     }
     void setAttacking(){
         state = State.ATTACK;
-        _playerListener?.sendAttack();
     }
     void setBlocking(){
         state = State.BLOCK;
@@ -129,6 +128,7 @@ public class Player : MonoBehaviour
     IEnumerator attacking()
     {
         yield return new WaitForSeconds(attackTime);
+        _playerAttackFunc?.Invoke();
         neutral();
     }
     IEnumerator blocking()
