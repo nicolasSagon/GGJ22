@@ -22,12 +22,17 @@ public class GameManager : MonoBehaviour
     private int consecHitPlayer1 = 0;
     private int consecHitPlayer2 = 0;
     private int hitsToWin = 3;
-    
+    private GameObject superPanel;
+
     public void Start()
     {
         ground = GameObject.Find(movingGameObjectName);
-        playerOne.setPlayerAction(firstPlayerAttackFunc);
-        playerTwo.setPlayerAction(secondPlayerAttackFunc);
+        superPanel = GameObject.Find("SuperPanel");
+        
+        superPanel.SetActive(false);
+        
+        playerOne.setPlayerActions(firstPlayerAttackFunc, startSuper);
+        playerTwo.setPlayerActions(secondPlayerAttackFunc, startSuper);
 
         var playerScoreItems = GameObject.FindGameObjectsWithTag("PlayerFeedback");
         
@@ -77,6 +82,21 @@ public class GameManager : MonoBehaviour
     private void secondPlayerAttackFunc()
     {
         handleAttack(playerTwo, playerOne, false);
+    }
+
+    private void startSuper()
+    {
+        superPanel.SetActive(true);
+        playerOne.enabled = false;
+        playerTwo.enabled = false;
+        var samuraiSuper = superPanel.GetComponent<SamuraiSuper>();
+        samuraiSuper.enabled = true;
+        samuraiSuper.initSamuraiSuper(superFinished, playerOne.attackKey, playerTwo.attackKey);
+    }
+
+    private void superFinished()
+    {
+        
     }
 
     private void handleAttack(Player attackingPlayer, Player defensePlayer, Boolean isMovingRight)

@@ -22,7 +22,8 @@ public class Player : MonoBehaviour
     private Keyboard keyboard = Keyboard.current;
     private State state;
     private int score;
-    [CanBeNull] private Action _playerAttackFunc; 
+    [CanBeNull] private Action _playerAttackFunc;
+    [CanBeNull] private Action _playerStartSuper;
 
     public float prepareTime = 0.5f;
     public float attackTime = 0.5f;
@@ -31,13 +32,17 @@ public class Player : MonoBehaviour
 
     public Key attackKey = Key.Q;
     public Key blockKey = Key.W;
+    public Key superKey = Key.E;
+
+    private Boolean isSupperEnabled;
 
     private Coroutine lastAttackingCoroutine;
     // public Animation anim; // TODO: uncomment when animation is ready
 
-    public void setPlayerAction(Action playerAttackFunc)
+    public void setPlayerActions(Action playerAttackFunc, Action playerStartSuper)
     {
         _playerAttackFunc = playerAttackFunc;
+        _playerStartSuper = playerStartSuper;
     }
 
     // Start is called before the first frame update
@@ -57,6 +62,7 @@ public class Player : MonoBehaviour
         if (keyboard == null)
         {
             Debug.Log("no keyboard");
+            return;
         }
         if (state == State.STUN){
             if (keyboard.anyKey.wasPressedThisFrame){
@@ -74,6 +80,11 @@ public class Player : MonoBehaviour
             {
                 feedbackStateNeutral.SetActive(false);
                 block();
+            }
+
+            if (keyboard[superKey].wasPressedThisFrame)
+            {
+                _playerStartSuper?.Invoke();
             }
         }
         if (state == State.PREPARE){
