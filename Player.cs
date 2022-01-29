@@ -15,7 +15,7 @@ public class Player : MonoBehaviour
         STUN
     }
 
-    public string name;
+    public string playerName;
     private Keyboard keyboard = Keyboard.current;
     private State state = State.NEUTRAL;
     [CanBeNull] private Action _playerAttackFunc; 
@@ -42,7 +42,7 @@ public class Player : MonoBehaviour
 
     private void debugWithPlayerName(string logString)
     {
-        Debug.Log($"{name} => {logString}");
+        Debug.Log($"{playerName} => {logString}");
     }
 
     // Update is called once per frame
