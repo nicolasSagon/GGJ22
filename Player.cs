@@ -27,6 +27,8 @@ public class Player : MonoBehaviour
 
     public Key attackKey = Key.Q;
     public Key blockKey = Key.W;
+
+    private Coroutine lastAttackingCoroutine;
     // public Animation anim; // TODO: uncomment when animation is ready
 
     public void setPlayerAction(Action playerAttackFunc)
@@ -107,11 +109,11 @@ public class Player : MonoBehaviour
             // anim.Play("attack"); // TODO: uncomment when animation is ready
             setAttacking();
             debugWithPlayerName("Attack!");
-            StartCoroutine(attacking());
+            lastAttackingCoroutine = StartCoroutine(attacking());
         }
     }
-    void doubleAttack(){
-        StopCoroutine(attacking());
+    public void doubleAttack(){
+        StopCoroutine(lastAttackingCoroutine);
         // anim.Play("doubleattack"); // TODO: uncomment when animation is ready
         debugWithPlayerName("Double Attack!");
         neutral();

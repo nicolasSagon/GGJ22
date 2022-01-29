@@ -63,6 +63,10 @@ public class GameManager : MonoBehaviour
                 break;
             case Player.State.ATTACK:
                 // Don't move the players, the attack is null
+                defensePlayer.doubleAttack();
+                break;
+            case Player.State.PREPARE:
+                defensePlayer.doubleAttack();
                 break;
             default:
                 moveGround(isMovingRight);
