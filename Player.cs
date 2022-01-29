@@ -110,6 +110,12 @@ public class Player : MonoBehaviour
             StartCoroutine(attacking());
         }
     }
+    void doubleAttack(){
+        StopCoroutine(attacking());
+        // anim.Play("doubleattack"); // TODO: uncomment when animation is ready
+        debugWithPlayerName("Double Attack!");
+        neutral();
+    }
     void block(){
         // anim.Play("block"); // TODO: uncomment when animation is ready
         setBlocking();
