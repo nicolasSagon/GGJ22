@@ -18,7 +18,7 @@ public class SamuraiSuper: MonoBehaviour
     private Boolean _isListeningKeyboard = false;
     private Boolean _isAlowedToPushKey = false;
 
-    private Action _callBackForResult;
+    private Action<PlayerData> _callBackForResult;
     private PlayerData _firstPlayer;
     private PlayerData _secondPlayer;
 
@@ -28,11 +28,17 @@ public class SamuraiSuper: MonoBehaviour
     private float _frameCounter = 0;
     private Boolean isCountingFrame = false;
 
-    public void initSamuraiSuper(Action callBackForResult, PlayerData firstPlayer, PlayerData secondPlayer)
+    public void initSamuraiSuper(Action<PlayerData> callBackForResult, PlayerData firstPlayer, PlayerData secondPlayer)
     {
         _callBackForResult = callBackForResult;
         _firstPlayer = firstPlayer;
         _secondPlayer = secondPlayer;
+        goSymbol.SetActive(false);
+        isCountingFrame = false;
+        frameCounter.SetActive(false);
+        _frameCounter = 0;
+        resultText.SetActive(false);
+
 
         var timming = new Random().Next(timmingRandomMin, timmingRandomMax);
         _isListeningKeyboard = true;
@@ -67,7 +73,7 @@ public class SamuraiSuper: MonoBehaviour
             _isListeningKeyboard = false;
             if (_isAlowedToPushKey)
             {
-                displayResult($"{currentPlayer.PlayerName} as win !");
+                displayResult($"{currentPlayer.PlayerName} as win !", currentPlayer);
                 displayFrameCounter();
                 isCountingFrame = false;
             }
@@ -75,11 +81,11 @@ public class SamuraiSuper: MonoBehaviour
             {
                 if (currentPlayer.Equals(_firstPlayer))
                 {
-                    displayResult($"{_secondPlayer.PlayerName} as win !");
+                    displayResult($"{_secondPlayer.PlayerName} as win !", _secondPlayer);
                 }
                 else
                 {
-                    displayResult($"{_firstPlayer.PlayerName} as win !");
+                    displayResult($"{_firstPlayer.PlayerName} as win !", _firstPlayer);
                 }
                 isCountingFrame = false;
             }
@@ -92,10 +98,11 @@ public class SamuraiSuper: MonoBehaviour
         frameCounter.GetComponent<TextMeshProUGUI>().text = $"{_frameCounter:0.00}";
     }
 
-    private void displayResult(string resultString)
+    private void displayResult(string resultString, PlayerData winnerData)
     {
         resultText.SetActive(true);
         resultText.GetComponent<TextMeshProUGUI>().text = resultString;
+        StartCoroutine(waitDisplay(winnerData));
     }
 
     IEnumerator startMiniGame(int timming)
@@ -104,6 +111,10 @@ public class SamuraiSuper: MonoBehaviour
         isCountingFrame = true;
         goSymbol.SetActive(true);
         _isAlowedToPushKey = true;
+    }
+    IEnumerator waitDisplay(PlayerData winnerData){
+        yield return new WaitForSeconds(2);
+        _callBackForResult?.Invoke(winnerData);
     }
 
 }

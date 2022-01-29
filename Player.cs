@@ -23,7 +23,7 @@ public class Player : MonoBehaviour
     private State state;
     private int score;
     [CanBeNull] private Action _playerAttackFunc;
-    [CanBeNull] private Action _playerStartSuper;
+    [CanBeNull] private Action<string> _playerStartSuper;
 
     public float prepareTime = 0.5f;
     public float attackTime = 0.5f;
@@ -37,9 +37,10 @@ public class Player : MonoBehaviour
     private Boolean isSupperEnabled;
 
     private Coroutine lastAttackingCoroutine;
+    private bool superReady = false;
     // public Animation anim; // TODO: uncomment when animation is ready
 
-    public void setPlayerActions(Action playerAttackFunc, Action playerStartSuper)
+    public void setPlayerActions(Action playerAttackFunc, Action<string> playerStartSuper)
     {
         _playerAttackFunc = playerAttackFunc;
         _playerStartSuper = playerStartSuper;
@@ -53,7 +54,7 @@ public class Player : MonoBehaviour
 
     private void debugWithPlayerName(string logString)
     {
-        Debug.Log($"{playerName} => {logString}");
+        //Debug.Log($"{playerName} => {logString}");
     }
 
     // Update is called once per frame
@@ -84,7 +85,9 @@ public class Player : MonoBehaviour
 
             if (keyboard[superKey].wasPressedThisFrame)
             {
-                _playerStartSuper?.Invoke();
+                if (isSuperReady()){
+                    _playerStartSuper?.Invoke(playerName);
+                }
             }
         }
         if (state == State.PREPARE){
@@ -102,6 +105,17 @@ public class Player : MonoBehaviour
     }
     public int GetScore(){
         return score;
+    }
+    public bool isSuperReady(){
+        return superReady;
+    }
+    public void setSuperReady(){
+        Debug.Log($"{playerName} super is ready!");
+        superReady = true;
+    }
+    public void unsetSuperReady(){
+        Debug.Log($"{playerName} super is unavailable!");
+        superReady = false;
     }
     public void scoreUp(){
         score++;

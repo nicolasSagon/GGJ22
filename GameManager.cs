@@ -22,6 +22,10 @@ public class GameManager : MonoBehaviour
     private int consecHitPlayer1 = 0;
     private int consecHitPlayer2 = 0;
     private int hitsToWin = 3;
+    private int dangerZone = 2;
+    public int superDamage = 4;
+    private bool superUsedPlayerOne = false;
+    private bool superUsedPlayerTwo = false;
     private GameObject superPanel;
 
     public void Start()
@@ -59,6 +63,8 @@ public class GameManager : MonoBehaviour
             localPosition.z
         );
         ground.transform.localPosition = localPosition;
+        Debug.Log($"Player1 Super: {playerOne.isSuperReady()} / Player2 Super: {playerTwo.isSuperReady()}");
+
     }
 
     private void Update()
@@ -71,36 +77,63 @@ public class GameManager : MonoBehaviour
             Debug.Log($"{playerTwo.playerName} wins!");
             // TODO: win anim
         }
+
+        if (playerOne.GetScore() < (1 - scoreToWin + dangerZone) && !playerOne.isSuperReady()){
+            playerOne.setSuperReady();
+        }
+        if (playerTwo.GetScore() < (1 - scoreToWin + dangerZone) && !playerTwo.isSuperReady()){
+            playerTwo.setSuperReady();
+        }
+
+        if (playerOne.GetScore() >= (1 - scoreToWin + dangerZone) && playerOne.isSuperReady()){
+            playerOne.unsetSuperReady();
+        }
+        if (playerTwo.GetScore() >= (1 - scoreToWin + dangerZone) && playerTwo.isSuperReady()){
+            playerTwo.unsetSuperReady();
+        }
         // TODO : end game
     }
-
     private void firstPlayerAttackFunc()
     {
         handleAttack(playerOne, playerTwo, true);
     }
-
     private void secondPlayerAttackFunc()
     {
         handleAttack(playerTwo, playerOne, false);
     }
 
-    private void startSuper()
+    private void startSuper(string playerName)
     {
+
+        if (playerName == playerOne.playerName){
+            if (superUsedPlayerOne){
+                Debug.Log($"{playerName} super already used!");
+                return;
+            }
+        } else {
+            if (superUsedPlayerTwo){
+                Debug.Log($"{playerName} super already used!");
+                return;
+            }
+        }
+
         superPanel.SetActive(true);
         playerOne.enabled = false;
         playerTwo.enabled = false;
         var samuraiSuper = superPanel.GetComponent<SamuraiSuper>();
         samuraiSuper.enabled = true;
         samuraiSuper.initSamuraiSuper(
-            superFinished,
+            handleSuper,
             new PlayerData(playerOne.playerName, playerOne.attackKey),
             new PlayerData(playerTwo.playerName, playerTwo.attackKey)
             );
-    }
 
-    private void superFinished()
-    {
-        
+        if (playerName == playerOne.playerName){
+            superUsedPlayerOne = true;
+        }
+        else {
+            superUsedPlayerTwo = true;
+        }
     }
 
     private void handleAttack(Player attackingPlayer, Player defensePlayer, Boolean isMovingRight)
@@ -130,6 +163,30 @@ public class GameManager : MonoBehaviour
                 break;
         }
         _scoreManager.displayHits(consecHitPlayer1, consecHitPlayer2);
+    }
+    private void handleSuper(PlayerData winnerData){
+        Player winner, loser;
+        bool isMovingRight;
+        if (winnerData.PlayerName == playerOne.playerName){
+            winner = playerOne;
+            loser = playerTwo;
+            isMovingRight = true;
+        }
+        else {
+            winner = playerTwo;
+            loser = playerOne;
+            isMovingRight = false;
+        }
+        for (var i=0; i < superDamage; i++){
+            moveGround(isMovingRight);
+            winner.scoreUp();
+            loser.scoreDown();
+        }
+        updateHits(isMovingRight);
+        updateHits(isMovingRight);
+        superPanel.SetActive(false);;
+        playerOne.enabled = true;
+        playerTwo.enabled = true;
     }
     public IEnumerator feedback(GameObject o) {
         o.SetActive(true);
