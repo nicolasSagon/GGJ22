@@ -13,6 +13,7 @@ public class Player : MonoBehaviour
     public GameObject feedbackCancel, feedbackHit;
     private Animator anim;
     public AnimationClip hitAnim;
+    public bool isDebug = false;
 
     public enum State {
         PREPARE,
@@ -60,6 +61,16 @@ public class Player : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         neutral();
+
+        if (!isDebug) {
+            feedbackStateNeutral.SetActive(false);
+            feedbackStatePrepare.SetActive(false);
+            feedbackStateAttack.SetActive(false);
+            feedbackStateBlock.SetActive(false);
+            feedbackStateStunned.SetActive(false);
+            feedbackCancel.SetActive(false);
+            feedbackHit.SetActive(false);
+        }
     }
 
     private void debugWithPlayerName(string logString)
@@ -148,26 +159,36 @@ public class Player : MonoBehaviour
     }
     void setPreparing(){
         state = State.PREPARE;
-        feedbackStatePrepare.SetActive(true);
+        if(isDebug){
+            feedbackStatePrepare.SetActive(true);
+        }
         anim.SetBool("punch", true);
     }
     void setAttacking(){
         state = State.ATTACK;
-        feedbackStateAttack.SetActive(true);
+        if(isDebug){
+            feedbackStateAttack.SetActive(true);
+        }
     }
     void setBlocking(){
         state = State.BLOCK;
-        feedbackStateBlock.SetActive(true);
+        if(isDebug){
+           feedbackStateBlock.SetActive(true);
+        }
         anim.SetBool("block", true);
     }
     void setNeutral(){
         state = State.NEUTRAL;
-        feedbackStateNeutral.SetActive(true);
+        if(isDebug){
+           feedbackStateNeutral.SetActive(true);
+        }
         anim.SetBool("neutral", true);
     }
     void setStunned(){
         state = State.STUN;
-        feedbackStateStunned.SetActive(true);
+        if(isDebug){
+           feedbackStateStunned.SetActive(true);
+        }
         anim.SetBool("stun", true);
     }
 
@@ -278,9 +299,11 @@ public class Player : MonoBehaviour
         neutral();
     }
     IEnumerator feedback(GameObject o) {
-        o.SetActive(true);
-        yield return new WaitForSeconds(1);
-        o.SetActive(false);
+        if(isDebug) {
+            o.SetActive(true);
+            yield return new WaitForSeconds(1);
+            o.SetActive(false);
+        }
     }
 
 }

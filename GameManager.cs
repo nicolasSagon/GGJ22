@@ -15,6 +15,8 @@ public class GameManager : MonoBehaviour
     public Player playerOne;
     public Player playerTwo;
 
+    public bool isDebug = false;
+
     private GameObject ground;
 
     private ScoreManager _scoreManager;
@@ -28,14 +30,20 @@ public class GameManager : MonoBehaviour
     private bool superUsedPlayerTwo = false;
     private GameObject superPanel;
     private InputManager _inputManager;
+    private SelectControllerHUD selectControllerHUD;
+    private GameObject menuRetry;
+    private GameObject playerHUD;
 
     public void Start()
     {
         ground = GameObject.Find(movingGameObjectName);
         superPanel = GameObject.Find("SuperPanel");
         _inputManager = FindObjectOfType<InputManager>();
+        menuRetry = GameObject.Find("MenuRetry");
+        playerHUD = GameObject.Find("PlayersHUD");
 
         superPanel.SetActive(false);
+        menuRetry.SetActive(false);
         
         playerOne.setPlayerActions(firstPlayerAttackFunc, startSuper);
         playerTwo.setPlayerActions(secondPlayerAttackFunc, startSuper);
@@ -54,12 +62,24 @@ public class GameManager : MonoBehaviour
         _scoreManager = new ScoreManager(player1ScoreItems, player2ScoreItems);
         _scoreManager.init();
         
-        _inputManager.setInputManagerCallback(() =>
+        _inputManager.setInputManagerCallback((numberController) =>
         {
-            StartCoroutine(startGame());
+            if(numberController == 1) {
+                selectControllerHUD.setFirstPlayerController(_inputManager.FirstController);
+            } else {
+                selectControllerHUD.setSecondPlayerController(_inputManager.SecondController);
+                StartCoroutine(startGame());
+            }
+            
         });
         superParticle1.SetActive(false);
         superParticle2.SetActive(false);
+
+        selectControllerHUD = FindObjectOfType<SelectControllerHUD>();
+
+        if (!isDebug) {
+            feedbackDoubleAttack.SetActive(false);
+        }
     }
 
     private void moveGround(Boolean isMoveRight)
@@ -221,24 +241,39 @@ public class GameManager : MonoBehaviour
         if (playerOne.GetScore() >= scoreToWin ){
             playerOne.win();
             playerTwo.fall();
+            StartCoroutine(gameFinished(playerOne.name));
         }
         else if (consecHitPlayer1 >= hitsToWin) {
             playerOne.win();
             playerTwo.die();
+            StartCoroutine(gameFinished(playerOne.name));
         }
         else if (playerTwo.GetScore() >= scoreToWin){
             playerTwo.win();
             playerOne.fall();
+            StartCoroutine(gameFinished(playerTwo.name));
         }
         else if (consecHitPlayer2 >= hitsToWin){
             playerTwo.win();
             playerOne.die();
+            StartCoroutine(gameFinished(playerTwo.name));
         }
     }
     public IEnumerator feedback(GameObject o) {
-        o.SetActive(true);
-        yield return new WaitForSeconds(1);
-        o.SetActive(false);
+        if(isDebug) {
+            o.SetActive(true);
+            yield return new WaitForSeconds(1);
+            o.SetActive(false);
+        }
+    }
+
+    private IEnumerator gameFinished(string playerName) {
+        selectControllerHUD.displayFightText($"{playerName} Win");
+        yield return new WaitForSeconds(4);
+        playerHUD.SetActive(false);
+        menuRetry.SetActive(true);
+
+        
     }
 
     private void updateHits(Boolean isMovingRight)
@@ -258,9 +293,16 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator startGame()
     {
-        yield return new WaitForSeconds(2);
-        Debug.Log("Game start Fight");
+        selectControllerHUD.displayFightText("3");
+        yield return new WaitForSeconds(1);
+        selectControllerHUD.displayFightText("2");
+        yield return new WaitForSeconds(1);
+        selectControllerHUD.displayFightText("1");
+        yield return new WaitForSeconds(1);
+        selectControllerHUD.displayFightText("FIGHT");
         playerOne.setCustomInputDevice(_inputManager.FirstController);
         playerTwo.setCustomInputDevice(_inputManager.SecondController);
+        yield return new WaitForSeconds(0.5f);
+        selectControllerHUD.hideFightText("FIGHT");
     }
 }

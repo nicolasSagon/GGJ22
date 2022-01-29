@@ -15,7 +15,7 @@ public class InputManager: MonoBehaviour
     public CustomInputDevice SecondController => secondController;
     
     private Boolean isInit = false;
-    [CanBeNull] private Action inputManagerInitializedCallback;
+    [CanBeNull] private Action<int> inputManagerInitializedCallback;
 
     private List<Key> firstKeyboardInput = new()
     {
@@ -37,7 +37,7 @@ public class InputManager: MonoBehaviour
         GamepadButton.X
     };
 
-    public void setInputManagerCallback(Action callback)
+    public void setInputManagerCallback(Action<int> callback)
     {
         inputManagerInitializedCallback = callback;
     }
@@ -56,7 +56,7 @@ public class InputManager: MonoBehaviour
     private void setInputManagerInitialized()
     {
         isInit = true;
-        inputManagerInitializedCallback?.Invoke();
+        inputManagerInitializedCallback?.Invoke(2);
     }
 
     private void selectController(Boolean isFirst)
@@ -85,6 +85,7 @@ public class InputManager: MonoBehaviour
                     {
                         Debug.Log($"Manette : {gamepad.name} was selected for player one");
                         firstController = new CustomInputDevice(CustomInputDevice.InputTypeEnum.GAMEPAD, gamepad, null, gamePadInput);
+                        inputManagerInitializedCallback?.Invoke(1);
                     }
                     else
                     {
@@ -104,6 +105,7 @@ public class InputManager: MonoBehaviour
                 {
                     Debug.Log("Keyboard set for player one");
                     firstController = new CustomInputDevice(CustomInputDevice.InputTypeEnum.KEYBOARD, Keyboard.current, firstKeyboardInput, null);
+                    inputManagerInitializedCallback?.Invoke(1);
                 }
                 else
                 {
@@ -126,6 +128,7 @@ public class InputManager: MonoBehaviour
                 {
                     Debug.Log("Keyboard set for player one");
                     firstController = new CustomInputDevice(CustomInputDevice.InputTypeEnum.KEYBOARD, Keyboard.current, secondKeyboardInput, null);
+                    inputManagerInitializedCallback?.Invoke(1);
                 }
                 else
                 {
