@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Core.Keyboard;
 using UnityEngine;
@@ -6,6 +7,8 @@ using UnityEngine.InputSystem;
 
 public class GameManager : MonoBehaviour
 {
+    public GameObject feedbackDoubleAttack;
+
     public int worldPositionMax = 10;
     public string movingGameObjectName = "MOVING_PLAYERS";
     public Player playerOne;
@@ -64,13 +67,21 @@ public class GameManager : MonoBehaviour
             case Player.State.ATTACK:
                 // Don't move the players, the attack is null
                 defensePlayer.doubleAttack();
+                StartCoroutine(feedback(feedbackDoubleAttack));
                 break;
             case Player.State.PREPARE:
                 defensePlayer.doubleAttack();
+                StartCoroutine(feedback(feedbackDoubleAttack));
                 break;
             default:
                 moveGround(isMovingRight);
+                StartCoroutine(feedback(defensePlayer.feedbackHit));
                 break;
         }
+    }
+    public IEnumerator feedback(GameObject o) {
+        o.SetActive(true);
+        yield return new WaitForSeconds(1);
+        o.SetActive(false);
     }
 }
