@@ -15,7 +15,7 @@ public class Player : MonoBehaviour
         STUN
     }
 
-    public string name;
+    public string playerName;
     private Keyboard keyboard = Keyboard.current;
     private State state = State.NEUTRAL;
     [CanBeNull] private Action _playerAttackFunc; 
