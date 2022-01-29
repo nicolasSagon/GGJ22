@@ -76,7 +76,6 @@ public class Player : MonoBehaviour
     }
     void setAttacking(){
         state = State.ATTACK;
-        _playerListener?.sendAttack();
     }
     void setBlocking(){
         state = State.BLOCK;
@@ -123,6 +122,7 @@ public class Player : MonoBehaviour
     IEnumerator attacking()
     {
         yield return new WaitForSeconds(attackTime);
+        _playerListener?.sendAttack();
         neutral();
     }
     IEnumerator blocking()
