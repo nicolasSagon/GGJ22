@@ -50,7 +50,25 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        gamepad = Gamepad.all[gamepadNumber]; 
+        if (gamepadEnabled == true) {
+            try {
+                if (Gamepad.all.Count > 1) {
+                    gamepad = Gamepad.all[gamepadNumber];
+                }
+                else if (Gamepad.all.Count == 1){
+                    gamepad = Gamepad.all[0];
+                }
+                else {
+                    gamepad = null;
+                }
+            }
+            catch (ArgumentOutOfRangeException) {
+                gamepad = null;
+            }
+        }
+        else{
+            gamepad = null;
+        }
         neutral();
     }
 
@@ -62,24 +80,44 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        bool attackPressed = false;
+        bool blockPressed = false;
+
         if (keyboard == null)
         {
             Debug.Log("no keyboard");
             return;
         }
+
+        if (gamepad != null){
+            if (gamepad.aButton.wasPressedThisFrame){
+                attackPressed = true;
+            }
+            else if (gamepad.bButton.wasPressedThisFrame){
+                blockPressed = true;
+            }
+        } else {
+            if (keyboard[attackKey].wasPressedThisFrame){
+                attackPressed = true;
+            }
+            else if (keyboard[blockKey].wasPressedThisFrame){
+                blockPressed = true;
+            }
+        }
+        
+
         if (state == State.STUN){
-            if (keyboard.anyKey.wasPressedThisFrame || gamepad.aButton.wasPressedThisFrame || gamepad.bButton.wasPressedThisFrame){
+            if (attackPressed || blockPressed){
                 debugWithPlayerName("You're stunned...");
             }
         }
-        if (state == State.NEUTRAL){
-            if (keyboard[attackKey].wasPressedThisFrame || gamepad.aButton.wasPressedThisFrame)
+        else if (state == State.NEUTRAL){
+            if (attackPressed)
             {
                 feedbackStateNeutral.SetActive(false);
                 prepare();
             }
-
-            if (keyboard[blockKey].wasPressedThisFrame || gamepad.bButton.wasPressedThisFrame)
+            else if (blockPressed)
             {
                 feedbackStateNeutral.SetActive(false);
                 block();
@@ -92,8 +130,8 @@ public class Player : MonoBehaviour
                 }
             }
         }
-        if (state == State.PREPARE){
-            if (keyboard[blockKey].wasPressedThisFrame || gamepad.bButton.wasPressedThisFrame) {
+        else if (state == State.PREPARE){
+            if (blockPressed) {
                 debugWithPlayerName("Cancel!");
                 StartCoroutine(feedback(feedbackCancel));
                 feedbackStatePrepare.SetActive(false);
