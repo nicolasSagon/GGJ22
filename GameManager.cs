@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Core.Keyboard;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -17,15 +18,30 @@ public class GameManager : MonoBehaviour
     private int currentWorlPosition = 0;
     private GameObject ground;
 
+    private ScoreManager _scoreManager;
+
+    private int scorePlayer1 = 0;
+    private int scorePlayer2 = 0;
+    
     public void Start()
     {
         ground = GameObject.Find(movingGameObjectName);
         playerOne.setPlayerAction(firstPlayerAttackFunc);
         playerTwo.setPlayerAction(secondPlayerAttackFunc);
-    }
 
-    public void pushPlayer(string playerName)
-    {
+        var playerScoreItems = GameObject.FindGameObjectsWithTag("PlayerFeedback");
+        
+        var player1ScoreItems = playerScoreItems
+            .Where(item => item.name.Contains("Player1"))
+            .OrderBy(item => item.name)
+            .ToList();
+        var player2ScoreItems = playerScoreItems
+            .Where(item => item.name.Contains("Player2"))
+            .OrderBy(item => item.name)
+            .ToList();
+
+        _scoreManager = new ScoreManager(player1ScoreItems, player2ScoreItems);
+        _scoreManager.init();
     }
 
     private void moveGround(Boolean isMoveRight)
@@ -38,11 +54,6 @@ public class GameManager : MonoBehaviour
             localPosition.z
         );
         ground.transform.localPosition = localPosition;
-    }
-
-    private void updateDisplay()
-    {
-        Debug.Log("Current score = " + currentWorlPosition);
     }
 
     private void firstPlayerAttackFunc()
@@ -76,12 +87,28 @@ public class GameManager : MonoBehaviour
             default:
                 moveGround(isMovingRight);
                 StartCoroutine(feedback(defensePlayer.feedbackHit));
+                updateScore(isMovingRight);
                 break;
         }
+        _scoreManager.displayScore(scorePlayer1, scorePlayer2);
     }
     public IEnumerator feedback(GameObject o) {
         o.SetActive(true);
         yield return new WaitForSeconds(1);
         o.SetActive(false);
+    }
+
+    private void updateScore(Boolean isMovingRight)
+    {
+        if (isMovingRight)
+        {
+            scorePlayer1++;
+            scorePlayer2 = 0;
+        }
+        else
+        {
+            scorePlayer2++;
+            scorePlayer1 = 0;
+        }
     }
 }
