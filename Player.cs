@@ -50,7 +50,7 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (gamepadEnabled == true) {
+        if (gamepadEnabled) {
             try {
                 if (Gamepad.all.Count > 1) {
                     gamepad = Gamepad.all[gamepadNumber];
