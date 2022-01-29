@@ -24,6 +24,7 @@ public class Player : MonoBehaviour
 
     public Key attackKey = Key.Q;
     public Key blockKey = Key.W;
+    public Animation anim;
 
     public void setPlayerListener(PlayerListener playerListener)
     {
@@ -89,27 +90,32 @@ public class Player : MonoBehaviour
     }
 
     void prepare(){
+        anim.Play("prepare");
         setPreparing();
         Debug.Log("Preparing...");
         StartCoroutine(preparing());
     }
     void attack(){
         if (state == State.PREPARE) {
+            anim.Play("attack");
             setAttacking();
             Debug.Log("Attack!");
             StartCoroutine(attacking());
         }
     }
     void block(){
+        anim.Play("block");
         setBlocking();
         Debug.Log("Block!");
         StartCoroutine(blocking());
     }
     void neutral(){
+        anim.Play("neutral");
         setNeutral();
         Debug.Log("Neutral!");
     }
     public void stun(){
+        anim.Play("stun");
         setStunned();
         Debug.Log("Stunned!");
         StartCoroutine(stunned());
