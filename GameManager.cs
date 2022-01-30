@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
 {
     private Sfx sound;
     private Music music;
+    public ParticleSystem doubleAttackParticle;
     public GameObject superParticle1, superParticle2;
     private int scoreToWin = 5;
     public string movingGameObjectName = "MOVING_PLAYERS";
@@ -198,6 +199,7 @@ public class GameManager : MonoBehaviour
             case Player.State.ATTACK:
                 // Don't move the players, the attack is null
                 defensePlayer.doubleAttack();
+                doubleAttackParticle.Play();
                 break;
             // case Player.State.PREPARE:
             //     defensePlayer.doubleAttack();
