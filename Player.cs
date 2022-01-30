@@ -9,7 +9,6 @@ using System.Linq;
 
 public class Player : MonoBehaviour
 {
-    public GameObject feedbackStateNeutral, feedbackStatePrepare, feedbackStateAttack, feedbackStateBlock, feedbackStateStunned;
     public GameObject feedbackCancel, feedbackHit;
     private Animator anim;
     private Sfx sound;
@@ -67,15 +66,6 @@ public class Player : MonoBehaviour
         sound = FindObjectOfType<Sfx>();
         neutral();
 
-        if (!isDebug) {
-            feedbackStateNeutral.SetActive(false);
-            feedbackStatePrepare.SetActive(false);
-            feedbackStateAttack.SetActive(false);
-            feedbackStateBlock.SetActive(false);
-            feedbackStateStunned.SetActive(false);
-            feedbackCancel.SetActive(false);
-            feedbackHit.SetActive(false);
-        }
     }
 
     private void debugWithPlayerName(string logString)
@@ -110,13 +100,11 @@ public class Player : MonoBehaviour
         else if (state == State.NEUTRAL){
             if (attackPressed)
             {
-                feedbackStateNeutral.SetActive(false);
                 anim.SetBool("neutral", false);
                 prepare();
             }
             else if (blockPressed)
             {
-                feedbackStateNeutral.SetActive(false);
                 anim.SetBool("neutral", false);
                 block();
             }
@@ -131,7 +119,6 @@ public class Player : MonoBehaviour
         else if (state == State.PREPARE){
             if (blockPressed) {
                 setCancelling();
-                feedbackStatePrepare.SetActive(false);
                 StartCoroutine(feedback(feedbackCancel));
                 sound.playCancel();
                 StartCoroutine(recovering(recoveryTimeCancel));
@@ -164,9 +151,6 @@ public class Player : MonoBehaviour
     }
     void setPreparing(){
         state = State.PREPARE;
-        if(isDebug){
-            feedbackStatePrepare.SetActive(true);
-        }
         anim.SetBool("punch", true);
     }
     void setCancelling(){
@@ -175,29 +159,17 @@ public class Player : MonoBehaviour
     }
     void setAttacking(){
         state = State.ATTACK;
-        if(isDebug){
-            feedbackStateAttack.SetActive(true);
-        }
     }
     void setBlocking(){
         state = State.BLOCK;
-        if(isDebug){
-           feedbackStateBlock.SetActive(true);
-        }
         anim.SetBool("block", true);
     }
     void setNeutral(){
         state = State.NEUTRAL;
-        if(isDebug){
-           feedbackStateNeutral.SetActive(true);
-        }
         anim.SetBool("neutral", true);
     }
     void setStunned(){
         state = State.STUN;
-        if(isDebug){
-           feedbackStateStunned.SetActive(true);
-        }
         anim.SetBool("stun", true);
     }
     void setHit(){
@@ -222,7 +194,6 @@ public class Player : MonoBehaviour
     public void doubleAttack(){
         if (lastAttackingCoroutine != null) {
             StopCoroutine(lastAttackingCoroutine);
-            feedbackStateAttack.SetActive(false);
             anim.SetBool("punch", false);
         }
         // anim.Play("doubleattack"); // TODO: uncomment when animation is ready
@@ -287,7 +258,6 @@ public class Player : MonoBehaviour
     IEnumerator preparing()
     {
         yield return new WaitForSeconds(prepareTime);
-        feedbackStatePrepare.SetActive(false);
         attack();
     }
     IEnumerator attacking()
@@ -295,21 +265,18 @@ public class Player : MonoBehaviour
         sound.playPunch();
         yield return new WaitForSeconds(attackTime);
         _playerAttackFunc?.Invoke();
-        feedbackStateAttack.SetActive(false);
         anim.SetBool("punch", false);
         StartCoroutine(recovering(recoveryTimeAttack));
     }
     IEnumerator blocking()
     {
         yield return new WaitForSeconds(blockTime);
-        feedbackStateBlock.SetActive(false);
         anim.SetBool("block", false);
         StartCoroutine(recovering(recoveryTimeBlock));
     }
     IEnumerator stunned()
     {
         yield return new WaitForSeconds(stunTime);
-        feedbackStateStunned.SetActive(false);
         anim.SetBool("stun", false);
         neutral(force: true);
     }
