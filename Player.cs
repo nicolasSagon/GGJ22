@@ -18,7 +18,9 @@ public class Player : MonoBehaviour
 
     public enum State {
         PREPARE,
+        CANCEL,
         ATTACK,
+        HIT,
         BLOCK,
         NEUTRAL,
         STUN
@@ -35,6 +37,7 @@ public class Player : MonoBehaviour
     public float attackTime = 0.5f;
     public float blockTime = 1.0f;
     public float stunTime = 2.0f;
+    public float recoveryTimeCancel = 0.1f, recoveryTimeAttack = 0.1f, recoveryTimeBlock = 0.1f;
 
     public Key attackKey = Key.Q;
     public Key blockKey = Key.W;
@@ -127,12 +130,11 @@ public class Player : MonoBehaviour
         }
         else if (state == State.PREPARE){
             if (blockPressed) {
-                debugWithPlayerName("Cancel!");
-                StartCoroutine(feedback(feedbackCancel));
+                setCancelling();
                 feedbackStatePrepare.SetActive(false);
-                anim.SetBool("punch", false);
+                StartCoroutine(feedback(feedbackCancel));
                 sound.playCancel();
-                neutral();
+                StartCoroutine(recovering(recoveryTimeCancel));
             }
         }
     }
@@ -167,6 +169,10 @@ public class Player : MonoBehaviour
         }
         anim.SetBool("punch", true);
     }
+    void setCancelling(){
+        state = State.CANCEL;
+        anim.SetBool("punch", false);
+    }
     void setAttacking(){
         state = State.ATTACK;
         if(isDebug){
@@ -193,6 +199,10 @@ public class Player : MonoBehaviour
            feedbackStateStunned.SetActive(true);
         }
         anim.SetBool("stun", true);
+    }
+    void setHit(){
+        state = State.HIT;
+        anim.SetBool("hit", true);
     }
 
     void prepare(){
@@ -267,6 +277,7 @@ public class Player : MonoBehaviour
         foreach (var p in anim.parameters.Where(item => item.type == AnimatorControllerParameterType.Bool)){
             anim.SetBool(p.name, false);
         }
+        setHit();
         StartCoroutine(hit());
     }
 
@@ -283,14 +294,14 @@ public class Player : MonoBehaviour
         _playerAttackFunc?.Invoke();
         feedbackStateAttack.SetActive(false);
         anim.SetBool("punch", false);
-        neutral();
+        StartCoroutine(recovering(recoveryTimeAttack));
     }
     IEnumerator blocking()
     {
         yield return new WaitForSeconds(blockTime);
         feedbackStateBlock.SetActive(false);
         anim.SetBool("block", false);
-        neutral();
+        StartCoroutine(recovering(recoveryTimeBlock));
     }
     IEnumerator stunned()
     {
@@ -300,15 +311,18 @@ public class Player : MonoBehaviour
         neutral(force: true);
     }
     IEnumerator hit(){
-        anim.SetBool("hit", true);
         sound.playDamage();
-        yield return new WaitForSeconds(hitAnim.length);
+        yield return new WaitForSeconds(recoveryTimeAttack);
         anim.SetBool("hit", false);
         neutral();
     }
     IEnumerator winning(){
         yield return new WaitForSeconds(1);
         sound.playVictory();
+    }
+    IEnumerator recovering(float recoveryTime){
+        yield return new WaitForSeconds(recoveryTime);
+        neutral();
     }
     IEnumerator feedback(GameObject o) {
         if(isDebug) {

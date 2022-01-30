@@ -202,10 +202,10 @@ public class GameManager : MonoBehaviour
                 defensePlayer.doubleAttack();
                 StartCoroutine(feedback(feedbackDoubleAttack));
                 break;
-            case Player.State.PREPARE:
-                defensePlayer.doubleAttack();
-                StartCoroutine(feedback(feedbackDoubleAttack));
-                break;
+            // case Player.State.PREPARE:
+            //     defensePlayer.doubleAttack();
+            //     StartCoroutine(feedback(feedbackDoubleAttack));
+            //     break;
             default:
                 moveGround(isMovingRight);
                 defensePlayer.takeHit();
