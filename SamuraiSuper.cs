@@ -83,11 +83,11 @@ public class SamuraiSuper: MonoBehaviour
             {
                 if (currentPlayer.Equals(_firstPlayer))
                 {
-                    displayResult($"{_secondPlayer.PlayerName} wins", _secondPlayer);
+                    displayResult($"{_secondPlayer.PlayerName} wins!", _secondPlayer);
                 }
                 else
                 {
-                    displayResult($"{_firstPlayer.PlayerName} wins", _firstPlayer);
+                    displayResult($"{_firstPlayer.PlayerName} wins!", _firstPlayer);
                 }
                 isCountingFrame = false;
             }
@@ -98,7 +98,7 @@ public class SamuraiSuper: MonoBehaviour
     private void displayFrameCounter()
     {
         frameCounter.SetActive(true);
-        frameCounter.GetComponent<TextMeshProUGUI>().text = $"{_frameCounter:0.00}";
+        frameCounter.GetComponent<TextMeshProUGUI>().text = $"{_frameCounter*1000:0.00}ms";
     }
 
     private void displayResult(string resultString, PlayerData winnerData)
