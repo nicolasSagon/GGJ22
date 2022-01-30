@@ -35,6 +35,7 @@ public class CharacterSpawner : MonoBehaviour
     }
 
     void spawn(GameObject o){
-        Instantiate(o, transform.position, transform.rotation);
+        var fighter = Instantiate(o, transform.position, transform.rotation);
+        fighter.transform.parent = transform;
     }
 }
