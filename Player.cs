@@ -271,6 +271,7 @@ public class Player : MonoBehaviour
     {
         blockParticle.Play();
         yield return new WaitForSeconds(blockTime);
+        blockParticle.Stop();
         anim.SetBool("block", false);
         StartCoroutine(recovering(recoveryTimeBlock));
     }
@@ -278,6 +279,7 @@ public class Player : MonoBehaviour
     {
         stunParticle.Play();
         yield return new WaitForSeconds(stunTime);
+        stunParticle.Stop();
         anim.SetBool("stun", false);
         neutral(force: true);
     }
@@ -285,6 +287,7 @@ public class Player : MonoBehaviour
         sound.playDamage();
         hitParticle.Play();
         yield return new WaitForSeconds(recoveryTimeAttack);
+        hitParticle.Stop();
         anim.SetBool("hit", false);
         neutral();
     }
