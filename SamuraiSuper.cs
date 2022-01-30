@@ -75,7 +75,7 @@ public class SamuraiSuper: MonoBehaviour
             _isListeningKeyboard = false;
             if (_isAlowedToPushKey)
             {
-                displayResult($"{currentPlayer.PlayerName} as win !", currentPlayer);
+                displayResult($"{currentPlayer.PlayerName} wins!", currentPlayer);
                 displayFrameCounter();
                 isCountingFrame = false;
             }
@@ -83,11 +83,11 @@ public class SamuraiSuper: MonoBehaviour
             {
                 if (currentPlayer.Equals(_firstPlayer))
                 {
-                    displayResult($"{_secondPlayer.PlayerName} as win !", _secondPlayer);
+                    displayResult($"{_secondPlayer.PlayerName} wins", _secondPlayer);
                 }
                 else
                 {
-                    displayResult($"{_firstPlayer.PlayerName} as win !", _firstPlayer);
+                    displayResult($"{_firstPlayer.PlayerName} wins", _firstPlayer);
                 }
                 isCountingFrame = false;
             }
