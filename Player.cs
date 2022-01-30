@@ -12,6 +12,7 @@ public class Player : MonoBehaviour
     public GameObject feedbackStateNeutral, feedbackStatePrepare, feedbackStateAttack, feedbackStateBlock, feedbackStateStunned;
     public GameObject feedbackCancel, feedbackHit;
     private Animator anim;
+    private Sfx sound;
     public AnimationClip hitAnim;
     public bool isDebug = false;
 
@@ -60,6 +61,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         anim = GetComponent<Animator>();
+        sound = FindObjectOfType<Sfx>();
         neutral();
 
         if (!isDebug) {
@@ -129,6 +131,7 @@ public class Player : MonoBehaviour
                 StartCoroutine(feedback(feedbackCancel));
                 feedbackStatePrepare.SetActive(false);
                 anim.SetBool("punch", false);
+                sound.playCancel();
                 neutral();
             }
         }
@@ -242,6 +245,7 @@ public class Player : MonoBehaviour
         }
         CustomInputDevice = null;
         anim.SetBool("death", true);
+        sound.playDeath();
     }
     public void fall(){
         foreach (var p in anim.parameters.Where(item => item.type == AnimatorControllerParameterType.Bool)){
@@ -249,6 +253,7 @@ public class Player : MonoBehaviour
         }
         CustomInputDevice = null;
         anim.SetBool("fall", true);
+        sound.playDeath();
     }
     public void win(){
         foreach (var p in anim.parameters.Where(item => item.type == AnimatorControllerParameterType.Bool)){
@@ -256,6 +261,7 @@ public class Player : MonoBehaviour
         }
         CustomInputDevice = null;
         anim.SetBool("victory", true);
+        StartCoroutine(winning());
     }
     public void takeHit(){
         foreach (var p in anim.parameters.Where(item => item.type == AnimatorControllerParameterType.Bool)){
@@ -272,6 +278,7 @@ public class Player : MonoBehaviour
     }
     IEnumerator attacking()
     {
+        sound.playPunch();
         yield return new WaitForSeconds(attackTime);
         _playerAttackFunc?.Invoke();
         feedbackStateAttack.SetActive(false);
@@ -294,9 +301,14 @@ public class Player : MonoBehaviour
     }
     IEnumerator hit(){
         anim.SetBool("hit", true);
+        sound.playDamage();
         yield return new WaitForSeconds(hitAnim.length);
         anim.SetBool("hit", false);
         neutral();
+    }
+    IEnumerator winning(){
+        yield return new WaitForSeconds(1);
+        sound.playVictory();
     }
     IEnumerator feedback(GameObject o) {
         if(isDebug) {

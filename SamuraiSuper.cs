@@ -27,9 +27,11 @@ public class SamuraiSuper: MonoBehaviour
 
     private float _frameCounter = 0;
     private Boolean isCountingFrame = false;
+    private Sfx sound;
 
     public void initSamuraiSuper(Action<PlayerData> callBackForResult, PlayerData firstPlayer, PlayerData secondPlayer)
     {
+        sound = FindObjectOfType<Sfx>();
         _callBackForResult = callBackForResult;
         _firstPlayer = firstPlayer;
         _secondPlayer = secondPlayer;
@@ -89,6 +91,7 @@ public class SamuraiSuper: MonoBehaviour
                 }
                 isCountingFrame = false;
             }
+            sound.playSuperHit();
         }
     }
 
@@ -110,6 +113,7 @@ public class SamuraiSuper: MonoBehaviour
         yield return new WaitForSeconds(timming);
         isCountingFrame = true;
         goSymbol.SetActive(true);
+        sound.playSuperGo();
         _isAlowedToPushKey = true;
     }
     IEnumerator waitDisplay(PlayerData winnerData){

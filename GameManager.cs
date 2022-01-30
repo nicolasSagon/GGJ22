@@ -8,6 +8,8 @@ using UnityEngine.InputSystem;
 
 public class GameManager : MonoBehaviour
 {
+    private Sfx sound;
+    private Music music;
     public GameObject feedbackDoubleAttack;
     public GameObject superParticle1, superParticle2;
     private int scoreToWin = 5;
@@ -36,6 +38,8 @@ public class GameManager : MonoBehaviour
 
     public void Start()
     {
+        sound = FindObjectOfType<Sfx>();
+        music = FindObjectOfType<Music>();
         ground = GameObject.Find(movingGameObjectName);
         superPanel = GameObject.Find("SuperPanel");
         _inputManager = FindObjectOfType<InputManager>();
@@ -104,12 +108,14 @@ public class GameManager : MonoBehaviour
             playerOne.setSuperReady();
             if (!superParticle1.activeSelf && !superUsedPlayerOne){
                 superParticle1.SetActive(true);
+                sound.playSuperReady();
             }
         }
         if (playerTwo.GetScore() < (1 - scoreToWin + dangerZone) && !playerTwo.isSuperReady()){
             playerTwo.setSuperReady();
             if (!superParticle2.activeSelf && !superUsedPlayerTwo){
                 superParticle2.SetActive(true);
+                sound.playSuperReady();
             }
         }
 
@@ -152,6 +158,7 @@ public class GameManager : MonoBehaviour
         }
 
         superPanel.SetActive(true);
+        music.playSuper();
         var samuraiSuper = superPanel.GetComponent<SamuraiSuper>();
         samuraiSuper.enabled = true;
         samuraiSuper.initSamuraiSuper(
@@ -187,6 +194,7 @@ public class GameManager : MonoBehaviour
                         consecHitPlayer2--;
                     }
                 }
+                sound.playBlock();
                 _scoreManager.displayHits(consecHitPlayer1, consecHitPlayer2);
                 break;
             case Player.State.ATTACK:
@@ -235,6 +243,7 @@ public class GameManager : MonoBehaviour
         superPanel.SetActive(false);
         playerOne.enabled = true;
         playerTwo.enabled = true;
+        music.playTheme();
         checkVictory();
     }
     private void checkVictory(){
