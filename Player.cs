@@ -65,9 +65,10 @@ public class Player : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         sound = FindObjectOfType<Sfx>();
-        hitParticle = GameObject.FindWithTag("hit").GetComponent<ParticleSystem>();
-        stunParticle = GameObject.FindWithTag("hit").GetComponent<ParticleSystem>();
-        blockParticle = GameObject.FindWithTag("hit").GetComponent<ParticleSystem>();
+        var particles = GetComponents<ParticleSystem>();
+        hitParticle = particles.Where(item => item.tag == "hit").First<ParticleSystem>();
+        stunParticle = particles.Where(item => item.tag == "stun").First<ParticleSystem>();
+        blockParticle = particles.Where(item => item.tag == "block").First<ParticleSystem>();
         neutral();
 
     }
