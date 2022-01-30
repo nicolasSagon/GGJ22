@@ -248,27 +248,27 @@ public class GameManager : MonoBehaviour
         if (playerOne.GetScore() >= scoreToWin ){
             playerOne.win();
             playerTwo.fall();
-            StartCoroutine(gameFinished(playerOne.name));
+            StartCoroutine(gameFinished(playerOne.name, "P1"));
         }
         else if (consecHitPlayer1 >= hitsToWin) {
             playerOne.win();
             playerTwo.die();
-            StartCoroutine(gameFinished(playerOne.name));
+            StartCoroutine(gameFinished(playerOne.name, "P1"));
         }
         else if (playerTwo.GetScore() >= scoreToWin){
             playerTwo.win();
             playerOne.fall();
-            StartCoroutine(gameFinished(playerTwo.name));
+            StartCoroutine(gameFinished(playerTwo.name, "P2"));
         }
         else if (consecHitPlayer2 >= hitsToWin){
             playerTwo.win();
             playerOne.die();
-            StartCoroutine(gameFinished(playerTwo.name));
+            StartCoroutine(gameFinished(playerTwo.name, "P2"));
         }
     }
 
-    private IEnumerator gameFinished(string playerName) {
-        selectControllerHUD.displayFightText($"{playerName} Win");
+    private IEnumerator gameFinished(string playerName, string playerNum) {
+        selectControllerHUD.displayFightText($"{playerName} ({playerNum}) wins!");
         yield return new WaitForSeconds(4);
         playerHUD.SetActive(false);
         menuRetry.SetActive(true);
