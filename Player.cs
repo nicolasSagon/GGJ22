@@ -47,7 +47,7 @@ public class Player : MonoBehaviour
 
     private Coroutine lastAttackingCoroutine;
     private bool superReady = false;
-    private bool isCurrentlyStunned = false;
+    private bool isCurrentlyStunned = false, isCurrentlySuper = false;
     // public Animation anim; // TODO: uncomment when animation is ready
 
     public void setPlayerActions(Action playerAttackFunc, Action<string> playerStartSuper)
@@ -132,6 +132,7 @@ public class Player : MonoBehaviour
         return state;
     }
     public int GetScore(){
+        Debug.Log($"{playerName} score is {score}");
         return score;
     }
     public bool isSuperReady(){
@@ -150,6 +151,12 @@ public class Player : MonoBehaviour
     }
     public void scoreDown(){
         --score;
+    }
+    public void setCurrentlySuper(){
+        isCurrentlySuper = true;
+    }
+    public void unsetCurrentlySuper(){
+        isCurrentlySuper = false;
     }
     void setPreparing(){
         state = State.PREPARE;
@@ -273,6 +280,11 @@ public class Player : MonoBehaviour
     {
         sound.playPunch();
         yield return new WaitForSeconds(attackTime);
+        if (isCurrentlySuper){
+            anim.SetBool("punch", false);
+            neutral();
+            yield break;
+        }
         _playerAttackFunc?.Invoke();
         anim.SetBool("punch", false);
         if (isCurrentlyStunned){

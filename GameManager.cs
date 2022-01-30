@@ -155,8 +155,8 @@ public class GameManager : MonoBehaviour
                 return;
             }
         }
-        playerOne.stopLastAttack();
-        playerTwo.stopLastAttack();
+        playerOne.setCurrentlySuper();
+        playerTwo.setCurrentlySuper();
 
         superPanel.SetActive(true);
         music.playSuper();
@@ -243,6 +243,8 @@ public class GameManager : MonoBehaviour
         superPanel.SetActive(false);
         playerOne.enabled = true;
         playerTwo.enabled = true;
+        playerOne.unsetCurrentlySuper();
+        playerTwo.unsetCurrentlySuper();
         music.playTheme();
         checkVictory();
     }
@@ -280,6 +282,8 @@ public class GameManager : MonoBehaviour
 
     private void updateHits(Boolean isMovingRight)
     {
+        var camshake = GameObject.FindObjectOfType<CamShake>();
+        camshake.shake();
         if (isMovingRight)
         {
             consecHitPlayer1++;
