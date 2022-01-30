@@ -198,10 +198,7 @@ public class Player : MonoBehaviour
         }
     }
     public void doubleAttack(){
-        if (lastAttackingCoroutine != null) {
-            StopCoroutine(lastAttackingCoroutine);
-            anim.SetBool("punch", false);
-        }
+        stopLastAttack();
         // anim.Play("doubleattack"); // TODO: uncomment when animation is ready
         debugWithPlayerName("Double Attack!");
         neutral();
@@ -259,6 +256,12 @@ public class Player : MonoBehaviour
         }
         setHit();
         StartCoroutine(hit());
+    }
+    public void stopLastAttack(){
+        if (lastAttackingCoroutine != null) {
+            StopCoroutine(lastAttackingCoroutine);
+            anim.SetBool("punch", false);
+        }
     }
 
     IEnumerator preparing()
