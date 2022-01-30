@@ -12,6 +12,7 @@ public class Player : MonoBehaviour
     public GameObject feedbackCancel, feedbackHit;
     private Animator anim;
     private Sfx sound;
+    private ParticleSystem hitParticle, blockParticle, stunParticle;
     public AnimationClip hitAnim;
     public bool isDebug = false;
 
@@ -64,6 +65,9 @@ public class Player : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         sound = FindObjectOfType<Sfx>();
+        hitParticle = GameObject.FindWithTag("hit").GetComponent<ParticleSystem>();
+        stunParticle = GameObject.FindWithTag("hit").GetComponent<ParticleSystem>();
+        blockParticle = GameObject.FindWithTag("hit").GetComponent<ParticleSystem>();
         neutral();
 
     }
@@ -270,18 +274,21 @@ public class Player : MonoBehaviour
     }
     IEnumerator blocking()
     {
+        blockParticle.Play();
         yield return new WaitForSeconds(blockTime);
         anim.SetBool("block", false);
         StartCoroutine(recovering(recoveryTimeBlock));
     }
     IEnumerator stunned()
     {
+        stunParticle.Play();
         yield return new WaitForSeconds(stunTime);
         anim.SetBool("stun", false);
         neutral(force: true);
     }
     IEnumerator hit(){
         sound.playDamage();
+        hitParticle.Play();
         yield return new WaitForSeconds(recoveryTimeAttack);
         anim.SetBool("hit", false);
         neutral();
