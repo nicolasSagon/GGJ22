@@ -20,7 +20,7 @@ public class CharacterSpawner : MonoBehaviour
                 spawn(eagle);
                 break;
             case ((int)Character.SNAKE):
-                spawn(eagle);
+                spawn(snake);
                 break;
             case ((int)Character.CROCO):
                 spawn(croco);
