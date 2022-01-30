@@ -56,8 +56,8 @@ public class SamuraiSuper: MonoBehaviour
             return;
         }
 
-        handlePlayerInputs(keyboard, _firstPlayer);
-        handlePlayerInputs(keyboard, _secondPlayer);
+        handlePlayerInputs(keyboard, _firstPlayer, "P1");
+        handlePlayerInputs(keyboard, _secondPlayer, "P2");
     }
 
     private void FixedUpdate()
@@ -68,14 +68,14 @@ public class SamuraiSuper: MonoBehaviour
         }
     }
 
-    private void handlePlayerInputs(Keyboard keyboard, PlayerData currentPlayer)
+    private void handlePlayerInputs(Keyboard keyboard, PlayerData currentPlayer, string playerNum)
     {
         if (currentPlayer.InputDevice.isAttackPressed() && _isListeningKeyboard)
         {
             _isListeningKeyboard = false;
             if (_isAlowedToPushKey)
             {
-                displayResult($"{currentPlayer.PlayerName} wins!", currentPlayer);
+                displayResult($"{currentPlayer.PlayerName} ({playerNum}) wins!", currentPlayer);
                 displayFrameCounter();
                 isCountingFrame = false;
             }
@@ -83,11 +83,11 @@ public class SamuraiSuper: MonoBehaviour
             {
                 if (currentPlayer.Equals(_firstPlayer))
                 {
-                    displayResult($"{_secondPlayer.PlayerName} wins!", _secondPlayer);
+                    displayResult($"{_secondPlayer.PlayerName} (P2) wins!", _secondPlayer);
                 }
                 else
                 {
-                    displayResult($"{_firstPlayer.PlayerName} wins!", _firstPlayer);
+                    displayResult($"{_firstPlayer.PlayerName} (P1) wins!", _firstPlayer);
                 }
                 isCountingFrame = false;
             }

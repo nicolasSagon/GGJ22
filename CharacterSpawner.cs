@@ -17,25 +17,26 @@ public class CharacterSpawner : MonoBehaviour
         var character = Random.Range(((int)Character.EAGLE), ((int)Character.FENEC)+1);
         switch (character){
             case ((int)Character.EAGLE):
-                spawn(eagle);
+                spawn(eagle, "Eagle");
                 break;
             case ((int)Character.SNAKE):
-                spawn(snake);
+                spawn(snake, "Cobra");
                 break;
             case ((int)Character.CROCO):
-                spawn(croco);
+                spawn(croco, "Croco");
                 break;
             case ((int)Character.FENEC):
-                spawn(fenec);
+                spawn(fenec, "Fenec");
                 break;
             default:
-                spawn(eagle);
+                spawn(eagle, "Eagle");
                 break;
         }
     }
 
-    void spawn(GameObject o){
+    void spawn(GameObject o, string name){
         var fighter = Instantiate(o, transform.position, transform.rotation);
+        fighter.name = name;
         fighter.transform.parent = transform;
     }
 }
