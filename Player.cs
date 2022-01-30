@@ -22,6 +22,7 @@ public class Player : MonoBehaviour
         HIT,
         BLOCK,
         NEUTRAL,
+        RECOVER,
         STUN
     }
 
@@ -175,6 +176,10 @@ public class Player : MonoBehaviour
         state = State.HIT;
         anim.SetBool("hit", true);
     }
+    void setRecovering(){
+        state = State.RECOVER;
+    }
+
 
     void prepare(){
         // anim.Play("prepare"); // TODO: uncomment when animation is ready
@@ -296,6 +301,7 @@ public class Player : MonoBehaviour
         sound.playVictory();
     }
     IEnumerator recovering(float recoveryTime){
+        setRecovering();
         yield return new WaitForSeconds(recoveryTime);
         neutral();
     }
