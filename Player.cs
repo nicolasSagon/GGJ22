@@ -9,7 +9,6 @@ using System.Linq;
 
 public class Player : MonoBehaviour
 {
-    public GameObject feedbackCancel, feedbackHit;
     private Animator anim;
     private Sfx sound;
     public ParticleSystem hitParticle, blockParticle, stunParticle;
@@ -120,7 +119,6 @@ public class Player : MonoBehaviour
         else if (state == State.PREPARE){
             if (blockPressed) {
                 setCancelling();
-                StartCoroutine(feedback(feedbackCancel));
                 sound.playCancel();
                 StartCoroutine(recovering(recoveryTimeCancel));
             }
@@ -297,13 +295,6 @@ public class Player : MonoBehaviour
     IEnumerator recovering(float recoveryTime){
         yield return new WaitForSeconds(recoveryTime);
         neutral();
-    }
-    IEnumerator feedback(GameObject o) {
-        if(isDebug) {
-            o.SetActive(true);
-            yield return new WaitForSeconds(1);
-            o.SetActive(false);
-        }
     }
 
 }
