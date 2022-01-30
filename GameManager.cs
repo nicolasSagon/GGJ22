@@ -10,7 +10,6 @@ public class GameManager : MonoBehaviour
 {
     private Sfx sound;
     private Music music;
-    public GameObject feedbackDoubleAttack;
     public GameObject superParticle1, superParticle2;
     private int scoreToWin = 5;
     public string movingGameObjectName = "MOVING_PLAYERS";
@@ -83,9 +82,6 @@ public class GameManager : MonoBehaviour
 
         selectControllerHUD = FindObjectOfType<SelectControllerHUD>();
 
-        if (!isDebug) {
-            feedbackDoubleAttack.SetActive(false);
-        }
     }
 
     private void moveGround(Boolean isMoveRight)
@@ -202,7 +198,6 @@ public class GameManager : MonoBehaviour
             case Player.State.ATTACK:
                 // Don't move the players, the attack is null
                 defensePlayer.doubleAttack();
-                StartCoroutine(feedback(feedbackDoubleAttack));
                 break;
             // case Player.State.PREPARE:
             //     defensePlayer.doubleAttack();
@@ -211,7 +206,6 @@ public class GameManager : MonoBehaviour
             default:
                 moveGround(isMovingRight);
                 defensePlayer.takeHit();
-                StartCoroutine(feedback(defensePlayer.feedbackHit));
                 updateHits(isMovingRight);
                 attackingPlayer.scoreUp();
                 defensePlayer.scoreDown();
@@ -268,13 +262,6 @@ public class GameManager : MonoBehaviour
             playerTwo.win();
             playerOne.die();
             StartCoroutine(gameFinished(playerTwo.name));
-        }
-    }
-    public IEnumerator feedback(GameObject o) {
-        if(isDebug) {
-            o.SetActive(true);
-            yield return new WaitForSeconds(1);
-            o.SetActive(false);
         }
     }
 
