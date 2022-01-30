@@ -65,10 +65,22 @@ public class Player : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         sound = FindObjectOfType<Sfx>();
-        var particles = GetComponents<ParticleSystem>();
-        hitParticle = particles.Where(item => item.tag == "hit").First<ParticleSystem>();
-        stunParticle = particles.Where(item => item.tag == "stun").First<ParticleSystem>();
-        blockParticle = particles.Where(item => item.tag == "block").First<ParticleSystem>();
+        var particles = gameObject.GetComponentsInChildren<ParticleSystem>();
+        foreach (var p in particles){
+            switch (p.tag) {
+                case "hit":
+                    hitParticle = p;
+                    break;
+                case "stun":
+                    stunParticle = p;
+                    break;
+                case "block":
+                    blockParticle = p;
+                    break;
+                default:
+                    break;
+            }
+        }
         neutral();
 
     }
