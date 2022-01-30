@@ -155,6 +155,8 @@ public class GameManager : MonoBehaviour
                 return;
             }
         }
+        playerOne.enabled = false;
+        playerTwo.enabled = false;
 
         superPanel.SetActive(true);
         music.playSuper();
@@ -165,8 +167,6 @@ public class GameManager : MonoBehaviour
             new PlayerData(playerOne.playerName, playerOne.CustomInputDevice),
             new PlayerData(playerTwo.playerName, playerTwo.CustomInputDevice)
         );
-        playerOne.enabled = false;
-        playerTwo.enabled = false;
 
         if (playerName == playerOne.playerName){
             superUsedPlayerOne = true;

@@ -146,10 +146,10 @@ public class Player : MonoBehaviour
         superReady = false;
     }
     public void scoreUp(){
-        score++;
+        ++score;
     }
     public void scoreDown(){
-        score--;
+        --score;
     }
     void setPreparing(){
         state = State.PREPARE;
