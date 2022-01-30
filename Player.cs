@@ -47,6 +47,7 @@ public class Player : MonoBehaviour
 
     private Coroutine lastAttackingCoroutine;
     private bool superReady = false;
+    private bool isCurrentlyStunned = false;
     // public Animation anim; // TODO: uncomment when animation is ready
 
     public void setPlayerActions(Action playerAttackFunc, Action<string> playerStartSuper)
@@ -102,6 +103,7 @@ public class Player : MonoBehaviour
             if (attackPressed)
             {
                 anim.SetBool("neutral", false);
+                Debug.Log("Prepare est appelé");
                 prepare();
             }
             else if (blockPressed)
@@ -270,6 +272,9 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(attackTime);
         _playerAttackFunc?.Invoke();
         anim.SetBool("punch", false);
+        if (isCurrentlyStunned){
+            yield break;
+        }
         StartCoroutine(recovering(recoveryTimeAttack));
     }
     IEnumerator blocking()
@@ -282,11 +287,16 @@ public class Player : MonoBehaviour
     }
     IEnumerator stunned()
     {
+        isCurrentlyStunned = true;
         stunParticle.Play();
+        Debug.Log($"Je suis dans l'état {state}");
         yield return new WaitForSeconds(stunTime);
         stunParticle.Stop();
         anim.SetBool("stun", false);
+        Debug.Log($"Je suis dans l'état {state}");
         neutral(force: true);
+        isCurrentlyStunned = false;
+        Debug.Log($"Je suis dans l'état {state}");
     }
     IEnumerator hit(){
         sound.playDamage();
