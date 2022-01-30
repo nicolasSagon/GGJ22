@@ -245,6 +245,9 @@ public class Player : MonoBehaviour
     }
     public void stun(){
         // anim.Play("stun"); // TODO: uncomment when animation is ready
+        foreach (var p in anim.parameters.Where(item => item.type == AnimatorControllerParameterType.Bool)){
+            anim.SetBool(p.name, false);
+        }
         setStunned();
         debugWithPlayerName("Stunned!");
         StartCoroutine(stunned());
