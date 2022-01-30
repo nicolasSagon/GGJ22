@@ -12,7 +12,7 @@ public class Player : MonoBehaviour
     public GameObject feedbackCancel, feedbackHit;
     private Animator anim;
     private Sfx sound;
-    private ParticleSystem hitParticle, blockParticle, stunParticle;
+    public ParticleSystem hitParticle, blockParticle, stunParticle;
     public AnimationClip hitAnim;
     public bool isDebug = false;
 
@@ -65,22 +65,6 @@ public class Player : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         sound = FindObjectOfType<Sfx>();
-        var particles = gameObject.GetComponentsInChildren<ParticleSystem>();
-        foreach (var p in particles){
-            switch (p.tag) {
-                case "hit":
-                    hitParticle = p;
-                    break;
-                case "stun":
-                    stunParticle = p;
-                    break;
-                case "block":
-                    blockParticle = p;
-                    break;
-                default:
-                    break;
-            }
-        }
         neutral();
 
     }
