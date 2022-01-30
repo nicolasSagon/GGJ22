@@ -14,8 +14,8 @@ public class GameManager : MonoBehaviour
     public GameObject superParticle1, superParticle2;
     private int scoreToWin = 5;
     public string movingGameObjectName = "MOVING_PLAYERS";
-    public Player playerOne;
-    public Player playerTwo;
+    private Player playerOne;
+    private Player playerTwo;
 
     public bool isDebug = false;
 
@@ -38,6 +38,8 @@ public class GameManager : MonoBehaviour
 
     public void Start()
     {
+        playerOne = GameObject.FindWithTag("P1").GetComponent<Player>();
+        playerTwo = GameObject.FindWithTag("P2").GetComponent<Player>();
         sound = FindObjectOfType<Sfx>();
         music = FindObjectOfType<Music>();
         ground = GameObject.Find(movingGameObjectName);
