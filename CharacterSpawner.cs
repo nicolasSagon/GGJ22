@@ -14,7 +14,7 @@ public class CharacterSpawner : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        var character = Random.Range(((int)Character.EAGLE), ((int)Character.FENEC));
+        var character = Random.Range(((int)Character.EAGLE), ((int)Character.FENEC)+1);
         switch (character){
             case ((int)Character.EAGLE):
                 spawn(eagle);
